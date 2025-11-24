@@ -3,6 +3,8 @@ from datetime import datetime
 from .user import User
 from .drive import Drive
 from .street import Street
+from .schedule import Schedule
+from .driver_stock import DriverStock
 
 
 class Driver(User):
@@ -47,7 +49,7 @@ class Driver(User):
         self.status = "Offline"
         db.session.commit()
 
-    def schedule_drive(self, areaId, streetId, date_str, time_str):
+    def schedule_drive(self, scheduleId, areaId, streetId, date_str, time_str):
         try:
             date = datetime.strptime(date_str, "%Y-%m-%d").date()
             time = datetime.strptime(time_str, "%H:%M").time()
@@ -66,30 +68,30 @@ class Driver(User):
         db.session.add(new_drive)
         db.session.commit()
 
-        street = Street.query.get(streetId)
-        if street:
-            for resident in street.residents:
-                resident.receive_notif(
-                    f"SCHEDULED>> Drive {new_drive.id} by Driver {self.id} on {date} at {time}"
-                )
-            db.session.commit()
-        return (new_drive)
+        message = f"SCHEDULED>> Drive {new_drive.id} by Driver {self.id} on {date} at {time}\n"
+        message += "Items in Stock:\n"
 
-    def cancel_drive(self, driveId):
+        driverStock = DriverStock.query.filter_by(driverId=self.id).all()
+        schedule = Schedule.query.get(scheduleId)
+        if driverStock and schedule:
+            for stock in driverStock:
+                item = stock.item
+                message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
+            schedule.notify_subscribers(message)
+            db.session.commit()
+            return (new_drive)
+        return None
+
+    def cancel_drive(self, driveId, scheduleId):
         drive = Drive.query.get(driveId)
-        if drive:
+        schedule = Schedule.query.get(scheduleId)
+        if drive and schedule:
             drive.status = "Cancelled"
             db.session.commit()
 
-            street = None
-            if self.streetId is not None:
-                street = Street.query.get(self.streetId)
-            if street:
-                for resident in street.residents:
-                    resident.receive_notif(
-                        f"CANCELLED: Drive {drive.id} by {self.id} on {drive.date} at {drive.time}"
-                    )
-                db.session.commit()
+            message = f"CANCELLED>> Drive {drive.id} by Driver {self.id} on {drive.date} at {drive.time}"
+            schedule.notify_subscribers(message)
+            db.session.commit()
         return None
 
     def view_drives(self):
