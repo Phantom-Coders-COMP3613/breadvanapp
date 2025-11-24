@@ -20,6 +20,7 @@ class Resident(User):
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
     houseNumber = db.Column(db.Integer, nullable=False)
     inbox = db.Column(MutableList.as_mutable(JSON), default=[])
+    
 
     area = db.relationship("Area", backref='residents')
     street = db.relationship("Street", backref='residents')
@@ -80,3 +81,9 @@ class Resident(User):
     def view_driver_stats(self, driverId):
         driver = Driver.query.get(driverId)
         return driver
+    
+    def update(self, message):
+      print(f'{self.name}: received {message}')
+      self.notification.append(Notification(message))
+      db.session.add(self)
+      db.session.commit()
