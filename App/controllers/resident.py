@@ -40,3 +40,24 @@ def resident_view_stock(resident, driver_id):
          raise ValueError("Driver not found.")
     stocks =  DriverStock.query.filter_by(driverId=driver_id).all()
     return stocks
+
+def watch_schedule(self,scheduleId):
+   schedule= Schedule.query.get(scheduleId)
+   if not schedule:
+        raise ValueError("Schedule not found.")
+   
+   schedule.subscribe(self)
+   return {"message": f"Successfully subscribed to schedule {scheduleId}."}
+
+
+def unwatch_schedule(self,scheduleId):
+    schedule= Schedule.query.get(scheduleId)
+
+    if not schedule:
+        raise ValueError("Schedule not found.")
+    
+    schedule.unsubscribe(self)
+    return {"message": f"Successfully unsubscribed from schedule {scheduleId}."}
+    
+
+
