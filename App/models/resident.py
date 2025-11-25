@@ -62,22 +62,6 @@ class Resident(User):
             db.session.commit()
         return
 
-    def receive_notif(self, message):
-        if self.inbox is None:
-            self.inbox = []
-
-        if len(self.inbox) >= MAX_INBOX_SIZE:
-            self.inbox.pop(0)
-
-        timestamp = datetime.now().strftime("%Y:%m:%d:%H:%M:%S")
-        notif = f"[{timestamp}]: {message}"
-        self.inbox.append(notif)
-        db.session.add(self)
-        db.session.commit()
-
-    def view_inbox(self):
-        return self.inbox
-
     def view_driver_stats(self, driverId):
         driver = Driver.query.get(driverId)
         return driver
