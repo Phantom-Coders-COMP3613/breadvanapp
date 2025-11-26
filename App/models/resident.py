@@ -6,6 +6,7 @@ from App.database import db
 from .user import User
 from .driver import Driver
 from .stop import Stop
+from .notifications import Notification
 
 MAX_INBOX_SIZE = 20
 
