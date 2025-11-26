@@ -2,6 +2,7 @@ from .user import User
 from .admin import Admin
 from .driver import Driver
 from .resident import Resident
+from .notifications import Notification
 
 from .drive import Drive
 from .stop import Stop

@@ -6,9 +6,7 @@ from App.database import db
 from .user import User
 from .driver import Driver
 from .stop import Stop
-
-MAX_INBOX_SIZE = 20
-
+from .notifications import Notification
 
 class Resident(User):
 
@@ -19,7 +17,6 @@ class Resident(User):
     driverId = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable = False)
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
     houseNumber = db.Column(db.Integer, nullable=False)
-    inbox = db.Column(MutableList.as_mutable(JSON), default=[])
     
 
     area = db.relationship("Area", backref='residents')
@@ -42,7 +39,6 @@ class Resident(User):
         user_json['areaId'] = self.areaId
         user_json['streetId'] = self.streetId
         user_json['houseNumber'] = self.houseNumber
-        user_json['inbox'] = self.inbox
         return user_json
 
     def request_stop(self, driveId):
