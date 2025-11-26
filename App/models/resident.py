@@ -24,6 +24,7 @@ class Resident(User):
     area = db.relationship("Area", backref='residents')
     street = db.relationship("Street", backref='residents')
     stops = db.relationship('Stop', backref='resident')
+    notifications = db.relationship("Notification", backref="resident")
 
     __mapper_args__ = {
         "polymorphic_identity": "Resident",
@@ -73,8 +74,10 @@ class Resident(User):
 
     def watch_schedule(self,scheduleId):
         schedule= Schedule.query.get(scheduleId)
-        schedule.subscribe(self)
+        if schedule:
+            schedule.subscribe(self)
         
     def unwatch_schedule(self,scheduleId):
         schedule= Schedule.query.get(scheduleId)
-        schedule.unsubscribe(self)
+        if schedule:
+            schedule.unsubscribe(self)
