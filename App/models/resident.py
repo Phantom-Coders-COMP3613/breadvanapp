@@ -19,7 +19,6 @@ class Resident(User):
     driverId = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable = False)
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
     houseNumber = db.Column(db.Integer, nullable=False)
-    inbox = db.Column(MutableList.as_mutable(JSON), default=[])
     
 
     area = db.relationship("Area", backref='residents')
