@@ -10,7 +10,7 @@ from App.api.security import role_required, current_user_id
 driver_views = Blueprint('driver_views', __name__)
 
 
-@driver_views.route('/driver/me', methods=['GET'])
+@driver_views.route('/api/driver/me', methods=['GET'])
 @jwt_required()
 @role_required('Driver')
 def me():
@@ -18,7 +18,7 @@ def me():
     return jsonify({'id': uid}), 200
 
 
-@driver_views.route('/driver/drives', methods=['GET'])
+@driver_views.route('/api/driver/drives', methods=['GET'])
 @jwt_required()
 @role_required('Driver')
 def list_drives():
@@ -34,7 +34,7 @@ def list_drives():
     return jsonify({'items': items, 'page': page, 'total': total}), 200
 
 
-@driver_views.route('/driver/drives', methods=['POST'])
+@driver_views.route('/api/driver/drives', methods=['POST'])
 @jwt_required()
 @role_required('Driver')
 def create_drive():
@@ -52,7 +52,7 @@ def create_drive():
     return jsonify(out), 201
 
 
-@driver_views.route('/driver/drives/<int:drive_id>/start', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
 @jwt_required()
 @role_required('Driver')
 def start_drive(drive_id):
@@ -62,7 +62,7 @@ def start_drive(drive_id):
     return jsonify({'id': drive_id, 'status': 'started'}), 200
 
 
-@driver_views.route('/driver/drives/<int:drive_id>/end', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:drive_id>/end', methods=['POST'])
 @jwt_required()
 @role_required('Driver')
 def end_drive(drive_id):
@@ -72,7 +72,7 @@ def end_drive(drive_id):
     return jsonify({'id': getattr(res, 'id', drive_id), 'status': 'ended'}), 200
 
 
-@driver_views.route('/driver/drives/<int:drive_id>/cancel', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:drive_id>/cancel', methods=['POST'])
 @jwt_required()
 @role_required('Driver')
 def cancel_drive(drive_id):
@@ -82,7 +82,7 @@ def cancel_drive(drive_id):
     return jsonify({'id': drive_id, 'status': 'cancelled'}), 200
 
 
-@driver_views.route('/driver/drives/<int:drive_id>/requested-stops', methods=['GET'])
+@driver_views.route('/api/driver/drives/<int:drive_id>/requested-stops', methods=['GET'])
 @jwt_required()
 @role_required('Driver')
 def requested_stops(drive_id):

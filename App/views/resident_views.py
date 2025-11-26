@@ -8,7 +8,7 @@ from App.controllers import user as user_controller
 resident_views = Blueprint('resident_views', __name__)
 
 
-@resident_views.route('/resident/me', methods=['GET'])
+@resident_views.route('/api/resident/me', methods=['GET'])
 @jwt_required()
 @role_required('Resident')
 def me():
@@ -16,7 +16,7 @@ def me():
     return jsonify({'id': uid}), 200
 
 
-@resident_views.route('/resident/stops', methods=['POST'])
+@resident_views.route('/api/resident/stops', methods=['POST'])
 @jwt_required()
 @role_required('Resident')
 def create_stop():
@@ -31,7 +31,7 @@ def create_stop():
     return jsonify(out), 201
 
 
-@resident_views.route('/resident/stops/<int:stop_id>', methods=['DELETE'])
+@resident_views.route('/api/resident/stops/<int:stop_id>', methods=['DELETE'])
 @jwt_required()
 @role_required('Resident')
 def delete_stop(stop_id):
@@ -41,7 +41,7 @@ def delete_stop(stop_id):
     return '', 204
 
 
-@resident_views.route('/resident/inbox', methods=['GET'])
+@resident_views.route('/api/resident/inbox', methods=['GET'])
 @jwt_required()
 @role_required('Resident')
 def inbox():
@@ -52,7 +52,7 @@ def inbox():
     return jsonify({'items': items}), 200
 
 
-@resident_views.route('/resident/driver-stats', methods=['GET'])
+@resident_views.route('/api/resident/driver-stats', methods=['GET'])
 @jwt_required()
 @role_required('Resident')
 def driver_stats():

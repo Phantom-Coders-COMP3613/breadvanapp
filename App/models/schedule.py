@@ -7,10 +7,10 @@ class Schedule(db.Model):
 
     def subscribe(self, resident):
         self.residents.append(resident)
-        
+
     def unsubscribe(self, resident):
         self.residents.remove(resident)
-    
+
     def notify_subscribers(self, message):
         for resident in self.residents:
             resident.update()
