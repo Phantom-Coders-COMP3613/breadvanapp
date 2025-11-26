@@ -8,9 +8,6 @@ from .driver import Driver
 from .stop import Stop
 from .notifications import Notification
 
-MAX_INBOX_SIZE = 20
-
-
 class Resident(User):
 
     __tablename__ = "resident"
@@ -42,7 +39,6 @@ class Resident(User):
         user_json['areaId'] = self.areaId
         user_json['streetId'] = self.streetId
         user_json['houseNumber'] = self.houseNumber
-        user_json['inbox'] = self.inbox
         return user_json
 
     def request_stop(self, driveId):
