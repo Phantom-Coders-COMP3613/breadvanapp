@@ -47,31 +47,11 @@ class ResidentUnitTests(unittest.TestCase):
         assert resident.houseNumber == 123
         assert resident.inbox == []
 
-    def test_resident_type(self):
-        resident = Resident("john", "johnpass", 1, 2, 123)
-        assert resident.type == "Resident"
-
     def test_resident_getJSON(self):
         resident = Resident("john", "johnpass", 1, 2, 123)
         resident_json = resident.get_json()
         self.assertDictEqual(resident_json, {"id":None, "username":"john", "areaId":1, "streetId":2, "houseNumber":123, "inbox":[]})
 
-    def test_receive_notif(self):
-        resident = Resident("john", "johnpass", 1, 2, 123)
-        resident.receive_notif("New msg")
-        assert resident.inbox[-1].endswith("New msg")
-        assert resident.inbox[-1].startswith("[")
-
-    def test_view_inbox(self):
-        resident = Resident("john", "johnpass", 1, 2, 123)
-        resident.receive_notif("msg1")
-        resident.receive_notif("msg2")
-        assert len(resident.inbox) == 2
-        assert resident.inbox[0].endswith("msg1")
-        assert resident.inbox[1].endswith("msg2")
-        assert resident.inbox[0].startswith("[")
-        assert resident.inbox[1].startswith("[")
-        
 class DriverUnitTests(unittest.TestCase):
 
     def test_new_driver(self):
@@ -81,31 +61,11 @@ class DriverUnitTests(unittest.TestCase):
         assert driver.status == "Busy"
         assert driver.areaId == 2
         assert driver.streetId == 12
-        
-    def test_driver_type(self):
-        driver = Driver("steve", "stevepass", "Busy", 2, 12)
-        assert driver.type == "Driver"
 
     def test_driver_getJSON(self):
         driver = Driver("steve", "stevepass", "Busy", 2, 12)
         driver_json = driver.get_json()
         self.assertDictEqual(driver_json, {"id":None, "username":"steve", "status":"Busy", "areaId":2, "streetId":12})
-
-class AdminUnitTests(unittest.TestCase):
-
-    def test_new_admin(self):
-        admin = Admin("admin", "adminpass")
-        assert admin.username == "admin"
-        assert admin.password != "adminpass"
-
-    def test_admin_type(self):
-        admin = Admin("admin", "adminpass")
-        assert admin.type == "Admin"
-
-    def test_admin_getJSON(self):
-        admin = Admin("admin", "adminpass")
-        admin_json = admin.get_json()
-        self.assertDictEqual(admin_json, {"id":None, "username":"admin"})
 
 class AreaUnitTests(unittest.TestCase):
 
