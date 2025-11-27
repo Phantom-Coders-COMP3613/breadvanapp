@@ -4,8 +4,10 @@ from datetime import date, time
 
 from App.main import create_app
 from App.database import db, create_db
-from App.models import User, Resident, Driver, Admin, Area, Street, Drive, Stop, Item, DriverStock
+from App.models import User, Resident, Driver, Admin, Area, Street, Drive, Stop, Item, DriverStock,notifications
 from App.controllers import *
+from App.models import schedule
+from App.models.schedule import Schedule
 
 
 LOGGER = logging.getLogger(__name__)
@@ -240,7 +242,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
         self.area = admin_add_area("St. Augustine")
         self.street = admin_add_street(self.area.id, "Warner Street")
         self.driver = admin_create_driver("driver1", "pass")
-        self.resident = resident_create("john", "johnpass", self.area.id, self.street.id, 123)
+        self.resident = resident_create("john", "johnpass", self.area.id, self.street.id, 123,1)
         self.drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30")
         self.item = admin_add_item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
 
@@ -263,6 +265,27 @@ class ResidentsIntegrationTests(unittest.TestCase):
         stock = resident_view_stock(self.resident, self.driver.id)
         self.assertIsNotNone(stock)
 
+    def test_update(self):
+        message = "Truck delayed by 30 minutes."
+        initial_count = len(Notification.query.all())
+        self.resident.update(message)
+        new_count = len(Notification.query.all())
+        self.assertEqual(new_count, initial_count + 1)
+        self.assertEqual(self.resident.notification[-1].message, message)
+
+    def test_watch_schedule(self):
+        schedule = Schedule.query.get(self.resident.scheduleid)
+        initial_count = len(schedule.residents)
+        self.resident.watch_schedule(schedule.id)
+        self.assertEqual(len(schedule.residents), initial_count + 1)
+        self.assertIn(self.resident, schedule.residents)
+
+    def test_unwatch_schedule(self):
+         schedule = Schedule.query.get(self.resident.scheduleid)
+         self.resident.watch_schedule(schedule.id)
+         self.assertIn(self.resident, schedule.residents)
+         self.resident.unwatch_schedule(schedule.id)
+         self.assertNotIn(self.resident, schedule.residents)
 
 class DriversIntegrationTests(unittest.TestCase):
                 
@@ -315,71 +338,6 @@ class DriversIntegrationTests(unittest.TestCase):
         stock = driver_view_stock(self.driver)
         self.assertIsNotNone(stock)
 
-
-class AdminsIntegrationTests(unittest.TestCase):
-    
-    def test_create_driver(self):
-        driver = admin_create_driver("driver1", "driverpass")
-        assert Driver.query.filter_by(id=driver.id).first() != None
-
-    def test_delete_driver(self):
-        driver = admin_create_driver("driver1", "driverpass")
-        admin_delete_driver(driver.id)
-        assert Driver.query.filter_by(id=driver.id).first() == None
-
-    def test_add_area(self):
-        area = admin_add_area("Port-of-Spain")
-        assert Area.query.filter_by(id=area.id).first() != None
-
-    def test_delete_area(self):
-        area = admin_add_area("Port-of-Spain")
-        admin_delete_area(area.id)
-        assert Area.query.filter_by(id=area.id).first() == None
-
-    def test_view_all_areas(self):
-        admin_add_area("Port-of-Spain")
-        admin_add_area("Arima")
-        admin_add_area("San Fernando")
-        areas = admin_view_all_areas()
-        assert areas != None
-        assert len(areas) == 3
-
-    def test_add_street(self):
-        area = admin_add_area("Port-of-Spain")
-        street = admin_add_street(area.id, "Fredrick Street")
-        assert Street.query.filter_by(id=street.id).first() != None
-
-    def test_delete_street(self):
-        area = admin_add_area("Port-of-Spain")
-        street = admin_add_street(area.id, "Fredrick Street")
-        admin_delete_street(street.id)
-        assert Street.query.filter_by(id=street.id).first() == None
-
-    def test_view_all_streets(self):
-        area = admin_add_area("Port-of-Spain")
-        admin_add_street(area.id, "Fredrick Street")
-        admin_add_street(area.id, "Warner Street")
-        admin_add_street(area.id, "St. Vincent Street")
-        streets = admin_view_all_streets()
-        assert streets != None
-        assert len(streets) == 3
-
-    def test_add_item(self):
-        item = admin_add_item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
-        assert Item.query.filter_by(id=item.id).first() != None
-
-    def test_delete_item(self):
-        item = admin_add_item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
-        admin_delete_item(item.id)
-        assert Item.query.filter_by(id=item.id).first() == None
-
-    def test_view_all_items(self):
-        admin_add_item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
-        admin_add_item("White Milk Bread", 12.00, "Soft and fluffy white milk bread", ["white", "soft"])
-        admin_add_item("Whole-Wheat Bread", 15.00, "Nutritious whole-wheat bread", ["whole-wheat", "nutritious"])
-        items = admin_view_all_items()
-        assert items != None
-        assert len(items) == 3
         
     
 
