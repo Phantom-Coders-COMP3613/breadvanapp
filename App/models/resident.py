@@ -7,6 +7,7 @@ from .user import User
 from .driver import Driver
 from .stop import Stop
 from .notifications import Notification
+from .schedule import Schedule
 
 class Resident(User):
 
@@ -16,23 +17,26 @@ class Resident(User):
     areaId = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
     driverId = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable = False)
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
+    scheduleid = db.Column(db.Integer,db.ForeignKey('schedule.id'),nullable=False)
     houseNumber = db.Column(db.Integer, nullable=False)
     
 
     area = db.relationship("Area", backref='residents')
     street = db.relationship("Street", backref='residents')
     stops = db.relationship('Stop', backref='resident')
+    notifications = db.relationship("Notification", backref="resident")
 
     __mapper_args__ = {
         "polymorphic_identity": "Resident",
     }
 
-    def __init__(self, username, password, areaId, streetId, driverId, houseNumber):
+    def __init__(self, username, password, areaId, streetId, driverId, houseNumber,scheduleid):
         super().__init__(username, password)
         self.areaId = areaId
         self.streetId = streetId
         self.driverId = driverId
         self.houseNumber = houseNumber
+        self.scheduleid = scheduleid
 
     def get_json(self):
         user_json = super().get_json()
@@ -67,3 +71,13 @@ class Resident(User):
       self.notification.append(Notification(message))
       db.session.add(self)
       db.session.commit()
+
+    def watch_schedule(self,scheduleId):
+        schedule= Schedule.query.get(scheduleId)
+        if schedule:
+            schedule.subscribe(self)
+        
+    def unwatch_schedule(self,scheduleId):
+        schedule= Schedule.query.get(scheduleId)
+        if schedule:
+            schedule.unsubscribe(self)

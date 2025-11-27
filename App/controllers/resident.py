@@ -1,6 +1,6 @@
 from App.models import Resident, Stop, Drive, Area, Street, DriverStock
 from App.database import db
-
+from App.models.schedule import Schedule
 # All resident-related business logic will be moved here as functions
 
 def resident_create(username, password, area_id, street_id, house_number):
