@@ -17,9 +17,7 @@ class Resident(User):
     areaId = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
     driverId = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable = False)
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
-    scheduleid = db.Column(db.Integer,db.ForeignKey('schedule.id'),nullable=False)
     houseNumber = db.Column(db.Integer, nullable=False)
-    
 
     area = db.relationship("Area", backref='residents')
     street = db.relationship("Street", backref='residents')
@@ -36,7 +34,6 @@ class Resident(User):
         self.streetId = streetId
         self.driverId = driverId
         self.houseNumber = houseNumber
-        self.scheduleid = scheduleid
 
     def get_json(self):
         user_json = super().get_json()
