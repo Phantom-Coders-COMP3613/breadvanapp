@@ -4,7 +4,7 @@ from datetime import date, time
 
 from App.main import create_app
 from App.database import db, create_db
-from App.models import User, Resident, Driver, Admin, Area, Street, Drive, Stop, Item, DriverStock,notifications
+from App.models import User, Resident, Driver, Admin, Area, Street, Drive, Stop, Item, DriverStock, Notification
 from App.controllers import *
 from App.models import schedule
 from App.models.schedule import Schedule
