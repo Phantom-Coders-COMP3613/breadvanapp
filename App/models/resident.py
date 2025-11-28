@@ -6,7 +6,7 @@ from App.database import db
 from .user import User
 from .driver import Driver
 from .stop import Stop
-from .notifications import Notification
+from .notification import Notification
 from .schedule import Schedule
 
 class Resident(User):
@@ -81,3 +81,6 @@ class Resident(User):
         schedule= Schedule.query.get(scheduleId)
         if schedule:
             schedule.unsubscribe(self)
+
+    def view_notifications(self):
+        return self.notifications

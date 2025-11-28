@@ -72,4 +72,4 @@ def admin_view_all_streets():
     return Street.query.all()
 
 def admin_view_all_items():
-     return Item.query.all()
+    return Item.query.all()

@@ -1,7 +1,7 @@
-from App.models import Schedule, Resident
+from App.models import Schedule
 from App.database import db
 
-def subscribe(schedule_id, resident):
+def schedule_subscribe(schedule_id, resident):
     """
     Subscribes a resident to a schedule.
     """
@@ -18,7 +18,7 @@ def subscribe(schedule_id, resident):
     db.session.commit()
     return schedule
 
-def unsubscribe(schedule_id, resident):
+def schedule_unsubscribe(schedule_id, resident):
     """
     Unsubscribes a resident from a schedule.
     """
@@ -35,7 +35,7 @@ def unsubscribe(schedule_id, resident):
     db.session.commit()
     return schedule
 
-def notify_subscribers(schedule_id, message):
+def schedule_notify_subscribers(schedule_id, message):
     """
     Notifies all subscribers of a schedule.
     """
