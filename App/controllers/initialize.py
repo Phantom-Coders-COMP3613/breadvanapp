@@ -1,15 +1,10 @@
 from App.database import db
-from App.models import Admin, Driver, Resident, Area, Street
+from App.models import *
 
 
 def initialize():
     db.drop_all()
     db.create_all()
-
-    #Creating Admin
-    admin = Admin(username="admin", password="adminpass")
-    db.session.add(admin)
-    db.session.commit()
 
     #Creating Areas and Streets
     area1 = Area(name='St. Augustine')
