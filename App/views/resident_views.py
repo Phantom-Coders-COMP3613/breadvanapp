@@ -67,3 +67,44 @@ def driver_stats():
     except ValueError as e:
         return jsonify({'error': {'code': 'not_found', 'message': str(e)}}), 404
     return jsonify({'stats': stats}), 200
+
+@resident_views.route('/api/resident/watch-schedule', methods=['POST'])
+@jwt_required()
+@role_required('Resident')
+def watch_schedule():
+    uid = current_user_id()
+    resident = user_controller.get_user(uid)
+    resident_controller.resident_watch_schedule(resident)
+    return '', 204
+
+@resident_views.route('/api/resident/unwatch-schedule', methods=['POST'])
+@jwt_required()
+@role_required('Resident')
+def unwatch_schedule():
+    uid = current_user_id()
+    resident = user_controller.get_user(uid)
+    resident_controller.resident_unwatch_schedule(resident)
+    return '', 204
+
+@resident_views.route('/api/resident/notify', methods=['POST'])
+@jwt_required()
+@role_required('Resident')
+def notify():
+    data = request.get_json() or {}
+    message = data.get('message')
+    if not message:
+        return jsonify({'error': {'code': 'validation_error', 'message': 'message is required'}}), 422
+    uid = current_user_id()
+    resident = user_controller.get_user(uid)
+    resident_controller.resident_update(resident, message)
+    return '', 204
+
+@resident_views.route('/api/resident/notifications', methods=['GET'])
+@jwt_required()
+@role_required('Resident')
+def notifications():
+    uid = current_user_id()
+    resident = user_controller.get_user(uid)
+    notifications = resident_controller.resident_view_notifications(resident)
+    notifications = [n.get_json() if hasattr(n, 'get_json') else n for n in (notifications or [])]
+    return jsonify({'notifications': notifications}), 200
