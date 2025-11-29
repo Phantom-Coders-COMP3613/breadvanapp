@@ -96,7 +96,7 @@ def notify():
         return jsonify({'error': {'code': 'validation_error', 'message': 'message is required'}}), 422
     uid = current_user_id()
     resident = user_controller.get_user(uid)
-    resident_controller.resident_update(resident, message)
+    resident_controller.resident_receive_notification(resident, message)
     return '', 204
 
 @resident_views.route('/api/resident/notifications', methods=['GET'])
