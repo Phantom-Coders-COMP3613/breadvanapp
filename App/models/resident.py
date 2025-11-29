@@ -64,7 +64,7 @@ class Resident(User):
         driver = Driver.query.get(driverId)
         return driver
     
-    def update(self, message):
+    def receive_notification(self, message):
       print(f'{self.name}: received {message}')
       self.notification.append(Notification(message))
       db.session.add(self)

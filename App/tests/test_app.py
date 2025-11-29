@@ -225,7 +225,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
     def test_update(self):
         message = "Truck delayed by 30 minutes."
         initial_count = len(Notification.query.all())
-        self.resident.update(message)
+        self.resident.receive_notification(message)
         new_count = len(Notification.query.all())
         self.assertEqual(new_count, initial_count + 1)
         self.assertEqual(self.resident.notification[-1].message, message)

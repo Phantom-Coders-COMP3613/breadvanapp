@@ -24,8 +24,8 @@ def resident_cancel_stop(resident, drive_id):
     resident.cancel_stop(stop.id)
     return stop
 
-def resident_view_inbox(resident):
-    return resident.view_inbox()
+def resident_view_notifications(resident):
+    return resident.view_notifications()
 
 def resident_view_driver_stats(resident, driver_id):
     driver = resident.view_driver_stats(driver_id)
@@ -61,5 +61,5 @@ def resident_unwatch_schedule(resident,scheduleId):
 def resident_view_notifications(resident):
     return resident.view_notifications()
 
-def resident_update(resident, message):
-    resident.update(message)
+def resident_receive_notification(resident, message):
+    resident.receive_notification(message)

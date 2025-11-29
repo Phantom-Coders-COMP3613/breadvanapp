@@ -64,7 +64,7 @@ __all__ = [
     # resident
     "resident_create", "resident_request_stop", "resident_cancel_stop",
     "resident_view_driver_stats", "resident_view_stock", "resident_view_notifications",
-    "resident_watch_schedule", "resident_unwatch_schedule", "resident_update",
+    "resident_watch_schedule", "resident_unwatch_schedule", "resident_receive_notification",
 
     # driver
     "driver_schedule_drive", "driver_cancel_drive", "driver_view_drives",
