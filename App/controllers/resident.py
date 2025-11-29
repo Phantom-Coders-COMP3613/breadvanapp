@@ -2,8 +2,8 @@ from App.models import Resident, Stop, Drive, DriverStock, Schedule, Notificatio
 from App.database import db
 # All resident-related business logic will be moved here as functions
 
-def resident_create(username, password, area_id, street_id, house_number):
-    resident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, houseNumber=house_number)
+def resident_create(username, password, area_id, street_id, schedule_id, house_number):
+    resident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, scheduleId=schedule_id, houseNumber=house_number)
     db.session.add(resident)
     db.session.commit()
     return resident

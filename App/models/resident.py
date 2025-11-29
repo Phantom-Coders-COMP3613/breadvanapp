@@ -15,8 +15,8 @@ class Resident(User):
 
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     areaId = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
-    driverId = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable = False)
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
+    scheduleId = db.Column(db.Integer,db.ForeignKey('schedule.id'),nullable=False)
     houseNumber = db.Column(db.Integer, nullable=False)
 
     area = db.relationship("Area", backref='residents')
@@ -28,18 +28,19 @@ class Resident(User):
         "polymorphic_identity": "Resident",
     }
 
-    def __init__(self, username, password, areaId, streetId, driverId, houseNumber,scheduleid):
+    def __init__(self, username, password, areaId, streetId, houseNumber, scheduleId):
         super().__init__(username, password)
         self.areaId = areaId
         self.streetId = streetId
-        self.driverId = driverId
         self.houseNumber = houseNumber
+        self.scheduleId = scheduleId
 
     def get_json(self):
         user_json = super().get_json()
         user_json['areaId'] = self.areaId
         user_json['streetId'] = self.streetId
         user_json['houseNumber'] = self.houseNumber
+        user_json['scheduleId'] = self.scheduleId
         return user_json
 
     def request_stop(self, driveId):
