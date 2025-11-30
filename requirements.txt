@@ -1,5 +1,5 @@
 Flask==2.3.3
-Flask-Admin==1.6.1
+Flask-Admin==2.0.2
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==3.1.0
 Flask-Reuploaded==1.2.0
