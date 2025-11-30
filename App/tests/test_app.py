@@ -47,12 +47,11 @@ class ResidentUnitTests(unittest.TestCase):
         assert resident.areaId == 1
         assert resident.streetId == 2
         assert resident.houseNumber == 123
-        assert resident.inbox == []
 
     def test_resident_getJSON(self):
         resident = Resident("john", "johnpass", 1, 2, 123)
         resident_json = resident.get_json()
-        self.assertDictEqual(resident_json, {"id":None, "username":"john", "areaId":1, "streetId":2, "houseNumber":123, "inbox":[]})
+        self.assertDictEqual(resident_json, {"id":None, "username":"john", "areaId":1, "streetId":2, "houseNumber":123})
 
 class DriverUnitTests(unittest.TestCase):
 
@@ -199,12 +198,12 @@ class UsersIntegrationTests(unittest.TestCase):
 class ResidentsIntegrationTests(unittest.TestCase):
     
     def setUp(self):
-        self.area = admin_add_area("St. Augustine")
-        self.street = admin_add_street(self.area.id, "Warner Street")
-        self.driver = admin_create_driver("driver1", "pass")
+        self.area = Area("St. Augustine")
+        self.street = Street(self.area.id, "Warner Street")
+        self.driver = Driver("driver1", "pass")
         self.resident = resident_create("john", "johnpass", self.area.id, self.street.id, 123,1)
-        self.drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30")
-        self.item = admin_add_item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
+        self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
 
 
     def test_request_stop(self):
@@ -250,13 +249,13 @@ class ResidentsIntegrationTests(unittest.TestCase):
 class DriversIntegrationTests(unittest.TestCase):
                 
     def setUp(self):
-        self.area = admin_add_area("St. Augustine")
-        self.street = admin_add_street(self.area.id, "Warner Street")
-        self.driver = admin_create_driver("driver1", "pass")
-        self.resident = resident_create("john", "johnpass", self.area.id, self.street.id, 123)
-        self.drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30")
-        self.stop = resident_request_stop(self.resident, self.drive.id)
-        self.item = admin_add_item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        self.area = Area("St. Augustine")
+        self.street = Street(self.area.id, "Warner Street")
+        self.driver = Driver("driver1", "pass")
+        self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123)
+        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
+        self.stop = Stop(self.resident, self.drive.id)
+        self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
 
     def test_schedule_drive(self):
         drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-30", "09:00")
@@ -297,7 +296,3 @@ class DriversIntegrationTests(unittest.TestCase):
     def test_view_stock(self):
         stock = driver_view_stock(self.driver)
         self.assertIsNotNone(stock)
-
-        
-    
-

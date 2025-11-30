@@ -6,20 +6,11 @@ from flask_migrate import Migrate, upgrade
 
 from App.database import db, get_migrate
 from App.database import db
-from App.models import User, Admin, Driver, Resident, Drive, Stop, Area, Street
+from App.models import *
+from App.controllers import *
+from App.controllers.initialize import initialize
 from App.main import create_app
-from App.controllers import (get_user, get_all_users_json, get_all_users,
-                             get_user_by_username, initialize)
-from App.controllers.admin import (
-    admin_create_driver,
-    admin_delete_driver,
-    admin_add_area,
-    admin_add_street,
-    admin_delete_area,
-    admin_delete_street,
-    admin_view_all_areas,
-    admin_view_all_streets
-)
+
 from App.controllers.driver import (
     driver_schedule_drive,
     driver_cancel_drive,
@@ -45,15 +36,6 @@ from App.controllers.user import (
 
 app = create_app()
 migrate = get_migrate(app)
-
-with app.app_context():
-    upgrade()
-    existing = db.session.query(User).filter_by(username='admin').first()
-    if not existing:
-        new_admin = Admin(username='admin', password='adminpass')
-        db.session.add(new_admin)
-        db.session.commit()
-
 
 # Initialisation
 @app.cli.command("init", help="Creates and initializes the database")
