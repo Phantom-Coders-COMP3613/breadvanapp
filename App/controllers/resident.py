@@ -21,18 +21,11 @@ def resident_cancel_stop(resident, drive_id):
     db.session.commit()
     return stop
 
-def resident_view_driver_stats(driver_id):
+def resident_view_driver_status(driver_id):
     driver = Driver.query.get(driver_id)
     if not driver:
         return None
     return driver
-
-def resident_view_stock(driver_id):
-    driver = Driver.query.get(driver_id)
-    stocks =  DriverStock.query.filter_by(driverId=driver_id).all()
-    if not driver or not stocks:
-        return None
-    return stocks
 
 def resident_watch_schedule(resident, scheduleId):
     schedule= Schedule.query.get(scheduleId)
