@@ -4,11 +4,8 @@ from datetime import date, time
 
 from App.main import create_app
 from App.database import db, create_db
-from App.models import User, Resident, Driver, Admin, Area, Street, Drive, Stop, Item, DriverStock, Notification
+from App.models import *
 from App.controllers import *
-from App.models import schedule
-from App.models.schedule import Schedule
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -227,7 +224,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
     def test_update(self):
         message = "Truck delayed by 30 minutes."
         initial_count = len(Notification.query.all())
-        self.resident.update(message)
+        self.resident.receive_notification(message)
         new_count = len(Notification.query.all())
         self.assertEqual(new_count, initial_count + 1)
         self.assertEqual(self.resident.notification[-1].message, message)
@@ -245,6 +242,26 @@ class ResidentsIntegrationTests(unittest.TestCase):
          self.assertIn(self.resident, schedule.residents)
          self.resident.unwatch_schedule(schedule.id)
          self.assertNotIn(self.resident, schedule.residents)
+
+    def test_view_notifications(self):
+        message1 = "Drive scheduled for tomorrow."
+        message2 = "New item added to stock."
+        notif1 = Notification(message=message1, residentId=self.resident.id)
+        notif2 = Notification(message=message2, residentId=self.resident.id)
+        db.session.add_all([notif1, notif2])
+        db.session.commit()
+        notifications = resident_view_notifications(self.resident)
+        self.assertEqual(len(notifications), 2)
+        self.assertEqual(notifications[0].message, message1)
+        self.assertEqual(notifications[1].message, message2)
+
+    def test_update(self):
+        message = "Truck delayed by 30 minutes."
+        initial_count = len(Notification.query.all())
+        resident_update(self.resident, message)
+        new_count = len(Notification.query.all())
+        self.assertEqual(new_count, initial_count + 1)
+        self.assertEqual(self.resident.notifications[-1].message, message)
 
 class DriversIntegrationTests(unittest.TestCase):
                 

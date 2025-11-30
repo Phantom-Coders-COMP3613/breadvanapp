@@ -1,10 +1,9 @@
-from App.models import Resident, Stop, Drive, Area, Street, DriverStock
+from App.models import Resident, Stop, Drive, DriverStock, Schedule, Notification
 from App.database import db
-from App.models.schedule import Schedule
 # All resident-related business logic will be moved here as functions
 
-def resident_create(username, password, area_id, street_id, house_number):
-    resident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, houseNumber=house_number)
+def resident_create(username, password, area_id, street_id, schedule_id, house_number):
+    resident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, scheduleId=schedule_id, houseNumber=house_number)
     db.session.add(resident)
     db.session.commit()
     return resident
@@ -25,8 +24,8 @@ def resident_cancel_stop(resident, drive_id):
     resident.cancel_stop(stop.id)
     return stop
 
-def resident_view_inbox(resident):
-    return resident.view_inbox()
+def resident_view_notifications(resident):
+    return resident.view_notifications()
 
 def resident_view_driver_stats(resident, driver_id):
     driver = resident.view_driver_stats(driver_id)
@@ -41,23 +40,26 @@ def resident_view_stock(resident, driver_id):
     stocks =  DriverStock.query.filter_by(driverId=driver_id).all()
     return stocks
 
-def watch_schedule(self,scheduleId):
+def resident_watch_schedule(resident,scheduleId):
    schedule= Schedule.query.get(scheduleId)
    if not schedule:
         raise ValueError("Schedule not found.")
    
-   schedule.subscribe(self)
+   schedule.subscribe(resident)
    return {"message": f"Successfully subscribed to schedule {scheduleId}."}
 
 
-def unwatch_schedule(self,scheduleId):
+def resident_unwatch_schedule(resident,scheduleId):
     schedule= Schedule.query.get(scheduleId)
 
     if not schedule:
         raise ValueError("Schedule not found.")
     
-    schedule.unsubscribe(self)
+    schedule.unsubscribe(resident)
     return {"message": f"Successfully unsubscribed from schedule {scheduleId}."}
     
+def resident_view_notifications(resident):
+    return resident.view_notifications()
 
-
+def resident_receive_notification(resident, message):
+    resident.receive_notification(message)
