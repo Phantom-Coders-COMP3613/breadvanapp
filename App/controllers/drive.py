@@ -1,4 +1,4 @@
-from App.models import Drive, Street, Area
-from App.database import db
+from App.models import *
 
-# All drive-related business logic will be moved here as functions
+def driver_view_drives(driver):
+    return Drive.query.filter(Drive.driverId==driver.id, Drive.status.in_(["Upcoming", "In Progress"])).all()
