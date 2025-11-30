@@ -8,29 +8,7 @@ from App.database import db, get_migrate
 from App.database import db
 from App.models import *
 from App.controllers import *
-from App.controllers.initialize import initialize
 from App.main import create_app
-
-from App.controllers.driver import (
-    driver_schedule_drive,
-    driver_cancel_drive,
-    driver_view_drives,
-    driver_start_drive,
-    driver_end_drive,
-    driver_view_requested_stops
-)
-from App.controllers.resident import (
-    resident_create,
-    resident_request_stop,
-    resident_cancel_stop,
-    resident_view_inbox,
-    resident_view_driver_stats
-)
-from App.controllers.user import (
-    user_login,
-    user_logout,
-    user_view_street_drives
-)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
