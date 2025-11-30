@@ -33,13 +33,6 @@ def resident_view_driver_stats(driver_id):
         return None
     return driver
 
-def resident_view_stock(driver_id):
-    driver = Driver.query.get(driver_id)
-    stocks =  DriverStock.query.filter_by(driverId=driver_id).all()
-    if not driver or not stocks:
-        return None
-    return stocks
-
 def resident_watch_schedule(resident, scheduleId):
     schedule= Schedule.query.get(scheduleId)
     if not schedule:
