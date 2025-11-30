@@ -27,7 +27,7 @@ def resident_cancel_stop(resident, drive_id):
     db.session.commit()
     return stop
 
-def resident_view_driver_stats(driver_id):
+def resident_view_driver_status(driver_id):
     driver = Driver.query.get(driver_id)
     if not driver:
         return None

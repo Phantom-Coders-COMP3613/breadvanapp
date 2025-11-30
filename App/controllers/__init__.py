@@ -16,8 +16,7 @@ from .resident import (
     resident_create,
     resident_request_stop,
     resident_cancel_stop,
-    resident_view_driver_stats,
-    resident_view_stock,
+    resident_view_driver_status,
     resident_watch_schedule,
     resident_unwatch_schedule,
     resident_view_notifications,
@@ -27,7 +26,6 @@ from .resident import (
 from .driver import (
     driver_schedule_drive,
     driver_cancel_drive,
-    driver_view_drives,
     driver_start_drive,
     driver_end_drive,
     driver_view_requested_stops,
