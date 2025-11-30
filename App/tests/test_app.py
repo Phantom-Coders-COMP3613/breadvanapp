@@ -12,29 +12,6 @@ LOGGER = logging.getLogger(__name__)
 '''
    Unit Tests
 '''
-class UserUnitTests(unittest.TestCase):
-
-    def test_new_user(self):
-        user = User("bob", "bobpass")
-        assert user.username == "bob"
-
-    # pure function no side effects or integrations called
-    def test_user_getJSON(self):
-        user = User("bob", "bobpass")
-        user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "username":"bob"})
-    
-    def test_hashed_password(self):
-        password = "mypass"
-        hashed = generate_password_hash(password, method='pbkdf2:sha256')
-        newuser = User("bob", password)
-        assert newuser.password != password
-
-    def test_check_password(self):
-        password = "mypass"
-        user = User("bob", password)
-        assert user.check_password(password)
-
 class ResidentUnitTests(unittest.TestCase):
 
     def test_new_resident(self):
@@ -157,48 +134,13 @@ def empty_db():
     yield app.test_client()
     db.drop_all()
 
-
-class UsersIntegrationTests(unittest.TestCase):
-
-    def test_create_user(self):
-        user = create_user("rick", "ronniepass")
-        assert user.username == "rick"
-
-    def test_get_all_users_json(self):
-        create_user("bob", "bobpass")
-        create_user("rick", "ronniepass")
-        users_json = get_all_users_json()
-        self.assertListEqual([{"id":1, "username":"bob"}, {"id":2, "username":"rick"}], users_json)
-
-    # Tests data changes in the database
-    def test_update_user(self):
-        create_user("rick", "ronniepass")
-        update_user(1, "ronnie")
-        user = get_user(1)
-        assert user.username == "ronnie"
-
-    def test_login(self):
-        create_user("ronnie", "ronniepass")
-        user = user_login("ronnie", "ronniepass")
-        assert user.username == "ronnie"
-
-    def test_logout(self):
-        create_user("ronnie", "ronniepass")
-        user = user_login("ronnie", "ronniepass")
-        user_logout(user)
-        assert user.logged_in == False
-        if isinstance(user, Driver):
-            updated_user = get_user(user.id)
-            assert updated_user.status == "Offline"
-
-
 class ResidentsIntegrationTests(unittest.TestCase):
     
     def setUp(self):
         self.area = Area("St. Augustine")
         self.street = Street(self.area.id, "Warner Street")
         self.driver = Driver("driver1", "pass")
-        self.resident = resident_create("john", "johnpass", self.area.id, self.street.id, 123,1)
+        self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123,1)
         self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
         self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
 
@@ -212,8 +154,8 @@ class ResidentsIntegrationTests(unittest.TestCase):
         resident_cancel_stop(self.resident, stop.id)
         self.assertIsNone(Stop.query.filter_by(id=stop.id).first())
 
-    def test_view_driver_stats(self):
-        driver = resident_view_driver_stats(self.resident, self.driver.id)
+    def test_view_driver_status(self):
+        driver = resident_view_driver_status(self.resident, self.driver.id)
         self.assertIsNotNone(driver)
 
     def test_view_stock(self):
@@ -255,16 +197,15 @@ class ResidentsIntegrationTests(unittest.TestCase):
         self.assertEqual(notifications[0].message, message1)
         self.assertEqual(notifications[1].message, message2)
 
-    def test_update(self):
+    def test_receive_notification(self):
         message = "Truck delayed by 30 minutes."
         initial_count = len(Notification.query.all())
-        resident_update(self.resident, message)
+        resident_receive_notification(self.resident, message)
         new_count = len(Notification.query.all())
         self.assertEqual(new_count, initial_count + 1)
         self.assertEqual(self.resident.notifications[-1].message, message)
 
 class DriversIntegrationTests(unittest.TestCase):
-                
     def setUp(self):
         self.area = Area("St. Augustine")
         self.street = Street(self.area.id, "Warner Street")

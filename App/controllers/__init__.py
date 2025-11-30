@@ -1,19 +1,9 @@
 from .auth import *
 from .initialize import *
 
-from .user import (
-    create_user,
-    get_user_by_username,
-    get_user,
-    get_all_users,
-    get_all_users_json,
-    update_user,
-    user_login,
-    user_logout
-)
+from .user import *
 
 from .resident import (
-    resident_create,
     resident_request_stop,
     resident_cancel_stop,
     resident_view_driver_stats,
@@ -43,9 +33,6 @@ from .schedule import (
 
 
 __all__ = [
-    # user
-    "create_user", "get_user_by_username", "get_user", "get_all_users",
-    "get_all_users_json", "update_user", "user_login", "user_logout",
 
     # resident
     "resident_create", "resident_request_stop", "resident_cancel_stop",
