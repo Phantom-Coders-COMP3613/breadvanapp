@@ -2,12 +2,6 @@ from App.models import *
 from App.database import db
 # All resident-related business logic will be moved here as functions
 
-def resident_create(username, password, area_id, street_id, schedule_id, house_number):
-    resident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, scheduleId=schedule_id, houseNumber=house_number)
-    db.session.add(resident)
-    db.session.commit()
-    return resident
-
 def resident_request_stop(resident, drive_id):
     drives = Drive.query.filter_by(areaId=resident.areaId, streetId=resident.streetId, status="Upcoming").all()
     existing_stop = Stop.query.filter_by(driveId=drive_id, residentId=resident.id).first()
