@@ -6,14 +6,14 @@ from App.controllers import drive as drive_controller
 common_views = Blueprint('common_views', __name__)
 
 
-@common_views.route('/areas', methods=['GET'])
+@common_views.route('/api/areas', methods=['GET'])
 def get_areas():
     areas = area_controller.admin_view_all_areas() if hasattr(area_controller, 'admin_view_all_areas') else []
     items = [a.get_json() if hasattr(a, 'get_json') else a for a in (areas or [])]
     return jsonify({'items': items}), 200
 
 
-@common_views.route('/streets', methods=['GET'])
+@common_views.route('/api/streets', methods=['GET'])
 def get_streets():
     area_id = request.args.get('area_id')
     streets = []
@@ -25,7 +25,7 @@ def get_streets():
     return jsonify({'items': items}), 200
 
 
-@common_views.route('/streets/<int:street_id>/drives', methods=['GET'])
+@common_views.route('/api/streets/<int:street_id>/drives', methods=['GET'])
 def street_drives(street_id):
     date = request.args.get('date')
     drives = []

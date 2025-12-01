@@ -20,7 +20,6 @@ class User(db.Model):
         self.username = username
         self.set_password(password)
         self.logged_in = False
-        self.inbox = []
 
     def get_json(self):
         return{
@@ -35,19 +34,3 @@ class User(db.Model):
     def check_password(self, password):
         """Check hashed password."""
         return check_password_hash(self.password, password)
-
-    def login(self, password):
-        if self.check_password(password):
-            self.logged_in = True
-            db.session.commit()
-            return True
-        return False
-
-    def logout(self):
-        self.logged_in = False
-        db.session.commit()
-
-    def view_street_drives(self, areaId, streetId):
-        return Drive.query.filter_by(areaId=areaId, streetId=streetId).all()
-    
-
