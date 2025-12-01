@@ -15,17 +15,18 @@ LOGGER = logging.getLogger(__name__)
 class ResidentUnitTests(unittest.TestCase):
 
     def test_new_resident(self):
-        resident = Resident("john", "johnpass", 1, 2, 123)
+        resident = Resident("john", "johnpass", 1,2,123,1)
         assert resident.username == "john"
         assert resident.password != "johnpass"
         assert resident.areaId == 1
         assert resident.streetId == 2
         assert resident.houseNumber == 123
+        assert resident.scheduleId == 1
 
     def test_resident_getJSON(self):
-        resident = Resident("john", "johnpass", 1, 2, 123)
+        resident = Resident("john", "johnpass", 1, 2, 123,1)
         resident_json = resident.get_json()
-        self.assertDictEqual(resident_json, {"id":None, "username":"john", "areaId":1, "streetId":2, "houseNumber":123})
+        self.assertDictEqual(resident_json, {"id":None, "username":"john", "areaId":1, "streetId":2, "houseNumber":123, "scheduleId":1})
 
 class DriverUnitTests(unittest.TestCase):
 
