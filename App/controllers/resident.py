@@ -3,7 +3,10 @@ from App.database import db
 # All resident-related business logic will be moved here as functions
 
 def resident_request_stop(resident, drive_id):
-    drives = Drive.query.filter_by(areaId=resident.areaId, streetId=resident.streetId, status="Upcoming").all()
+    areaId=resident.areaId
+    streetId=resident.streetId
+
+    drives = Drive.query.filter_by(areaId,streetId, status="Upcoming").all()
     existing_stop = Stop.query.filter_by(driveId=drive_id, residentId=resident.id).first()
     if not any(d.id == drive_id for d in drives) or not existing_stop:
         return None

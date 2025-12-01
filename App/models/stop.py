@@ -4,9 +4,7 @@ from App.database import db
 class Stop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     driveId = db.Column(db.Integer, db.ForeignKey('drive.id'), nullable=False)
-    residentId = db.Column(db.Integer,
-                           db.ForeignKey('resident.id'),
-                           nullable=False)
+    residentId = db.Column(db.Integer,db.ForeignKey('resident.id'),nullable=False)
 
     drive = db.relationship("Drive", backref="stops")
 

@@ -140,9 +140,9 @@ class ResidentsIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.area = Area("St. Augustine")
         self.street = Street(self.area.id, "Warner Street")
-        self.driver = Driver("driver1", "pass")
+        self.driver = Driver("driver1", "pass","Available",self.area.id,self.street.id)
         self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123,1)
-        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
+        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30:10", "Upcoming")
         self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
 
 
