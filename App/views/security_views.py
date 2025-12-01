@@ -9,7 +9,13 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    user = user_controller.verify_user(username, password) 
+    if not username or not password:
+        return jsonify({'error': 'Missing username or password'}), 400
+
+    try:
+        user = user_controller.verify_user(username, password)
+    except Exception:
+        return jsonify({'error': 'Authentication service unavailable'}), 500
 
     if user:
 

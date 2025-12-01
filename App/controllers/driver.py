@@ -21,7 +21,23 @@ def driver_schedule_drive(driver, area_id, street_id, date_str, time_str):
     return new_drive
 
 def driver_cancel_drive(driver, drive_id):
-    return driver.cancel_drive(drive_id)
+    drive = Drive.query.get(drive_id)
+
+    if not drive or drive.driverId != driver.id:
+        raise ValueError("Drive not found or does not belong to this driver.")
+
+    drive.status = "Cancelled"
+
+    street = Street.query.get(drive.streetId)
+    if street and street.residents:
+        for resident in street.residents:
+            
+            resident.receive_notif(
+                f"CANCELLED: Drive {drive.id} by {driver.id} on {drive.date} at {drive.time}"
+            )
+    
+    db.session.commit()
+    return drive
 
 def driver_view_drives(driver):
     return [d for d in driver.view_drives() if d.status in ("Upcoming", "In Progress")]
@@ -32,14 +48,29 @@ def driver_start_drive(driver, drive_id):
         raise ValueError(f"You are already on drive {current_drive.id}.")
     drive = Drive.query.filter_by(driverId=driver.id, id=drive_id, status="Upcoming").first()
     if not drive:
-        raise ValueError("Drive not found or cannot be started.")
+        raise ValueError("Drive not found or cannot be started.")      
+    
+    driver.status = "Busy"
+    driver.areaId = drive.areaId
+    driver.streetId = drive.streetId
+    
+    drive.status = "In Progress"
+    
+    db.session.commit()
     return driver.start_drive(drive_id)
 
 def driver_end_drive(driver):
     current_drive = Drive.query.filter_by(driverId=driver.id, status="In Progress").first()
     if not current_drive:
         raise ValueError("No drive in progress.")
-    return driver.end_drive(current_drive.id)
+    
+    driver.status = "Available"
+    current_drive.status = "Completed"
+    
+    db.session.commit()
+        
+    return current_drive
+
 
 def driver_view_requested_stops(driver, drive_id):
     stops = driver.view_requested_stops(drive_id)
