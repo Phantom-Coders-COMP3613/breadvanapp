@@ -1,24 +1,22 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 
-from App.api.security import role_required, current_user_id
 from App.controllers import resident as resident_controller
 from App.controllers import user as user_controller
+from App.controllers import *
 
 resident_views = Blueprint('resident_views', __name__)
 
 
 @resident_views.route('/api/resident/me', methods=['GET'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def me():
     uid = current_user_id()
     return jsonify({'id': uid}), 200
 
 
 @resident_views.route('/api/resident/stops', methods=['POST'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def create_stop():
     data = request.get_json() or {}
     drive_id = data.get('drive_id')
@@ -32,8 +30,7 @@ def create_stop():
 
 
 @resident_views.route('/api/resident/stops/<int:stop_id>', methods=['DELETE'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def delete_stop(stop_id):
     uid = current_user_id()
     resident = user_controller.get_user(uid)
@@ -42,8 +39,7 @@ def delete_stop(stop_id):
 
 
 @resident_views.route('/api/resident/inbox', methods=['GET'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def inbox():
     uid = current_user_id()
     resident = user_controller.get_user(uid)
@@ -53,8 +49,7 @@ def inbox():
 
 
 @resident_views.route('/api/resident/driver-stats', methods=['GET'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def driver_stats():
     params = request.args
     driver_id = params.get('driver_id')
@@ -69,8 +64,7 @@ def driver_stats():
     return jsonify({'stats': stats}), 200
 
 @resident_views.route('/api/resident/watch-schedule', methods=['POST'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def watch_schedule():
     uid = current_user_id()
     resident = user_controller.get_user(uid)
@@ -78,8 +72,7 @@ def watch_schedule():
     return '', 204
 
 @resident_views.route('/api/resident/unwatch-schedule', methods=['POST'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def unwatch_schedule():
     uid = current_user_id()
     resident = user_controller.get_user(uid)
@@ -87,8 +80,7 @@ def unwatch_schedule():
     return '', 204
 
 @resident_views.route('/api/resident/notify', methods=['POST'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def notify():
     data = request.get_json() or {}
     message = data.get('message')
@@ -100,8 +92,7 @@ def notify():
     return '', 204
 
 @resident_views.route('/api/resident/notifications', methods=['GET'])
-@jwt_required()
-@role_required('Resident')
+@login_required('Resident')
 def notifications():
     uid = current_user_id()
     resident = user_controller.get_user(uid)
