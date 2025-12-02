@@ -1,9 +1,7 @@
-from App.models import Driver, Drive, Street, Item, DriverStock
+from App.models import *
 from App.database import db
 from datetime import datetime, timedelta
-# Import Schedule for the notification logic in schedule_drive
-from App.models import Schedule
-# Assuming Area model is available via foreign key relationships if needed
+from .schedule import schedule_notify_subscribers
 
 # All driver-related business logic is moved here as functions
 
@@ -50,16 +48,15 @@ def driver_schedule_drive(driver, schedule_id, area_id, street_id, date_str, tim
     existing_drive = Drive.query.filter_by(areaId=area_id, streetId=street_id, date=date, status="Upcoming").first()
     if existing_drive:
         raise ValueError(f"A drive for this street is already scheduled on {date_str}.")
+    
+    try:
+        date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        time = datetime.strptime(time_str, "%H:%M").time()
+    except Exception:
+        print("Invalid date or time format. Please use YYYY-MM-DD for date and HH:MM for time.")
+        return
 
-    # Create the new drive
-    new_drive = Drive(
-        driverId=driver.id,
-        areaId=area_id,
-        streetId=street_id,
-        date=date,
-        time=time,
-        status="Upcoming"
-    )
+    new_drive = Drive(driverId=driver.id, areaId=area_id,streetId=street_id,date=date,time=time,status="Upcoming")
     db.session.add(new_drive)
     db.session.commit()
 
@@ -67,15 +64,14 @@ def driver_schedule_drive(driver, schedule_id, area_id, street_id, date_str, tim
     message += "Items in Stock:\n"
 
     driverStock = DriverStock.query.filter_by(driverId=driver.id).all()
-    schedule = Schedule.query.get(schedule_id) # Using schedule_id
-
-    if driverStock and schedule:
+    if driverStock:
         for stock in driverStock:
-            message += f"- {stock.item.get_json()} (Quantity: {stock.quantity})\n"
-        schedule.notify_subscribers(message)
+            item = stock.item
+            message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
+        schedule_notify_subscribers(message)
         db.session.commit()
-
-    return new_drive
+        return (new_drive)
+    return None
 
 def driver_cancel_drive(driver, drive_id):
     """
@@ -91,12 +87,13 @@ def driver_cancel_drive(driver, drive_id):
 
     street = Street.query.get(drive.streetId)
     if street and street.residents:
-        message = f"CANCELLED: Drive {drive.id} by {driver.id} on {drive.date} at {drive.time}"
-        for resident in street.residents:
-            resident.receive_notif(message)
-
-    db.session.commit()
-    return drive
+        drive = Drive.query.get(drive_id)
+        if drive:
+            drive.status = "Cancelled"
+            message = f"CANCELLED>> Drive {drive.id} by Driver {driver.id} on {drive.date} at {drive.time}"
+            schedule_notify_subscribers(message)
+            db.session.commit()
+        return None
 
 def driver_view_drives(driver):
     """

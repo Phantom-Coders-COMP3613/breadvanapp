@@ -28,31 +28,20 @@ def resident_view_driver_status(driver_id):
     return driver
 
 def resident_watch_schedule(resident):
-    # Use schedule controller to subscribe the resident to the singleton schedule
-    schedule = Schedule.query.first()
-    if not schedule:
-        return None
-    try:
-        from .schedule import schedule_subscribe
-        return schedule_subscribe(schedule.id, resident)
-    except Exception:
-        return None
+    from .schedule import schedule_subscribe
+    return schedule_subscribe(resident)
 
 def resident_unwatch_schedule(resident):
-    schedule = Schedule.query.first()
-    if not schedule:
-        return None
-    try:
-        from .schedule import schedule_unsubscribe
-        return schedule_unsubscribe(schedule.id, resident)
-    except Exception:
-        return None
+    from .schedule import schedule_unsubscribe
+    return schedule_unsubscribe(resident)
 
 def resident_view_inbox(resident):
-    return Notification.query.filter_by(residentId=resident.id).all()
+    return resident.notifications
 
 def resident_receive_notification(resident, message):
-    resident.notifications.append(Notification(message=message, residentId=resident.id))
-    db.session.add(resident)
+    notification = Notification(message=message)
+    resident.notifications.append(notification)
+    db.session.add_all([resident, notification])
     db.session.commit()
+    print(f'{resident.notifications[-1]}')
     return resident.notifications[-1]

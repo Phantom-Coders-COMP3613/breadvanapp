@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, app, render_template
 from flask_uploads import DOCUMENTS, IMAGES, TEXT, UploadSet, configure_uploads
 from flask_cors import CORS
@@ -25,6 +26,8 @@ def add_views(app):
     # API views live under App/views and are registered above
 
 def create_app(overrides={}):
+    # Ensure environment variables from .flaskenv/.env are loaded when app is created
+    load_dotenv()
     app = Flask(__name__, static_url_path='/static')
     load_config(app, overrides)
     CORS(app)
@@ -41,7 +44,5 @@ def create_app(overrides={}):
     def custom_unauthorized_response(error):
         return render_template('401.html', error=error), 401
     app.app_context().push()
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     return app
 

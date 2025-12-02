@@ -1,9 +1,9 @@
 from App.database import db
 from App.models import *
-from .admin import *
-from .user import *
-from .driver import *
-from .resident import *
+from .admin import create_area, create_street, create_item, create_schedule
+from .user import create_resident, create_driver
+from .driver import driver_schedule_drive
+from .resident import resident_watch_schedule, resident_request_stop
 
 def initialize():
     db.drop_all()
@@ -17,9 +17,9 @@ def initialize():
 
     create_schedule()
 
-    resident1 = create_resident('Resident1', 'Resident1pass', 1, 15, 123)
-    resident2 = create_resident('Resident2', 'Resident2pass', 2, 27, 422)
-    resident_watch_schedule(resident1, 1)
+    resident1 = create_resident('Resident1', 'Resident1pass', 1, 1, 123)
+    resident2 = create_resident('Resident2', 'Resident2pass', 2, 2, 422)
+    resident_watch_schedule(resident1)
 
     driver1 = create_driver('Driver1', 'Driver1pass')
     driver2 = create_driver('Driver2', 'Driver2pass')
@@ -28,8 +28,8 @@ def initialize():
     create_item("Raisin Bread", 12.00)
     create_item("Hops Bread", 20.00)
 
-    driver_schedule_drive(driver1, 1, 15, "2025-12-31", "10:00")
-    driver_schedule_drive(driver2, 2, 27, "2026-01-06", "09:00")
+    driver_schedule_drive(driver1, 1, 1, "2025-12-31", "10:00")
+    driver_schedule_drive(driver2, 2, 2, "2026-01-06", "09:00")
 
     resident_request_stop(resident1, 1)
     resident_request_stop(resident2, 2)
