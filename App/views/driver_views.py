@@ -4,15 +4,14 @@ from App.views.auth import auth_views
 from App.controllers import driver as driver_controller
 from App.controllers import user as user_controller
 from App.views import user as user_views
-from App.api.security import role_required, current_user_id
-
+from App.controllers import *
 
 driver_views = Blueprint('driver_views', __name__, url_prefix='/driver')
 
 
 @driver_views.route('/api/driver/me', methods=['GET'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def me():
     uid = current_user_id()
     return jsonify({'id': uid}), 200
@@ -20,7 +19,7 @@ def me():
 
 @driver_views.route('/api/driver/drives', methods=['GET'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def list_drives():
     params = request.args
     page = int(params.get('page', 1))
@@ -36,7 +35,7 @@ def list_drives():
 
 @driver_views.route('/drives', methods=['POST'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def create_drive():
     data = request.get_json() or {}
     area_id = data.get('area_id')
@@ -69,7 +68,7 @@ def create_drive_alt():
     
 @driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def start_drive(drive_id):
     uid = current_user_id()
     driver = user_controller.get_user(uid)
@@ -79,7 +78,7 @@ def start_drive(drive_id):
 
 @driver_views.route('/api/driver/drives/<int:drive_id>/end', methods=['POST'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def end_drive(drive_id):
     uid = current_user_id()
     driver = user_controller.get_user(uid)
@@ -89,7 +88,7 @@ def end_drive(drive_id):
 
 @driver_views.route('/api/driver/drives/<int:drive_id>/cancel', methods=['POST'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def cancel_drive(drive_id):
     uid = current_user_id()
     driver = user_controller.get_user(uid)
@@ -99,7 +98,7 @@ def cancel_drive(drive_id):
 
 @driver_views.route('/api/driver/drives/<int:drive_id>/requested-stops', methods=['GET'])
 @jwt_required()
-@role_required('Driver')
+@login_required('Driver')
 def requested_stops(drive_id):
     uid = current_user_id()
     driver = user_controller.get_user(uid)
