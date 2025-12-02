@@ -53,9 +53,7 @@ class Driver(User):
             date = datetime.strptime(date_str, "%Y-%m-%d").date()
             time = datetime.strptime(time_str, "%H:%M").time()
         except Exception:
-            print(
-                "Invalid date or time format. Please use YYYY-MM-DD for date and HH:MM for time."
-            )
+            print("Invalid date or time format. Please use YYYY-MM-DD for date and HH:MM for time.")
             return
 
         new_drive = Drive(driverId=self.id,
