@@ -120,6 +120,13 @@ class DriverStockUnitTests(unittest.TestCase):
         driverStock = DriverStock(1, 2, 30)
         driverStock_json = driverStock.get_json()
         self.assertDictEqual(driverStock_json, {"id":None, "driverId":1, "itemId":2, "quantity":30})
+
+class NotificationUnitTests(unittest.TestCase):
+
+    def test_new_notification(self):
+        notification=Notification(1,"I have arrived")
+        assert notification.residentId == 1
+        assert notification.message == "I have arrived"
         
 
 '''
