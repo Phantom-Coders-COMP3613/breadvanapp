@@ -22,9 +22,7 @@ def driver_set_online_status(driver):
 def driver_logout(driver):
     """
     Sets the driver's status to 'Offline' upon logout.
-    This function handles the state change that was previously inside Driver.logout().
     """
-    # super().logout() equivalent (user session cleanup) would ideally happen elsewhere
     driver.status = "Offline"
     db.session.commit()
     return driver
@@ -115,7 +113,6 @@ def driver_start_drive(driver, drive_id):
     if current_drive:
         raise ValueError(f"You are already on drive {current_drive.id}.")
 
-    # Find the drive to start, ensuring it's Upcoming
     drive = Drive.query.filter_by(driverId=driver.id, id=drive_id, status="Upcoming").first()
     if not drive:
         raise ValueError("Drive not found or cannot be started (must be Upcoming).")
@@ -125,9 +122,8 @@ def driver_start_drive(driver, drive_id):
     driver.areaId = drive.areaId
     driver.streetId = drive.streetId
 
-    # Update drive state
-    drive.status = "In Progress"
 
+    drive.status = "In Progress"
     db.session.commit()
     return drive
 
@@ -140,10 +136,7 @@ def driver_end_drive(driver):
     if not current_drive:
         raise ValueError("No drive in progress.")
 
-    # Update driver state
     driver.status = "Available"
-
-    # Update drive state
     current_drive.status = "Completed"
 
     db.session.commit()
@@ -157,11 +150,10 @@ def driver_view_requested_stops(driver, drive_id):
 
     """
     drive = Drive.query.get(drive_id)
-    # Ensure the drive exists and belongs to the current driver
+    
     if not drive or drive.driverId != driver.id:
         return []
 
-    # Assuming 'stops' is a relationship on the Drive model
     return drive.stops
 
 
