@@ -5,12 +5,13 @@ class Schedule(db.Model):
 
     residents = db.relationship("Resident", backref="schedule", lazy=True)
 
-    ## def subscribe(self, resident):
-    ##    self.residents.append(resident)
+    def subscribe(self, resident):
+       self.residents.append(resident)
 
-    ##def unsubscribe(self, resident):
-    ##    self.residents.remove(resident)
 
-   ## def notify_subscribers(self, message):
-    ##    for resident in self.residents:
-    ##        resident.update()
+    def unsubscribe(self, resident):
+       self.residents.remove(resident)
+
+    def notify_subscribers(self, message):
+       for resident in self.residents:
+           resident.update()

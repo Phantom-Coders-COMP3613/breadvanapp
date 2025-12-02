@@ -1,16 +1,45 @@
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, verify_jwt_in_request
+from flask_jwt_extended import create_access_token, current_user, jwt_required, JWTManager, get_jwt_identity, verify_jwt_in_request
+from flask import jsonify
+from functools import wraps
 
 from App.models import User
 from App.database import db
 
 def login(username, password):
-  user = User.query.filter_by(username=username).first()
+  result = db.session.execute(db.select(User).filter_by(username=username))
+  user = result.scalar_one_or_none()
   if user and user.check_password(password):
-      claims = {"role": user.type}  
-      token = create_access_token(identity=user.id, additional_claims=claims)
-      return token
+    # Store ONLY the user id as a string in JWT 'sub'
+    return create_access_token(identity=str(user.id))
   return None
 
+def login_required(required_class):
+  """
+  Custom decorator that extends jwt_required to verify if current_user is an instance of the specified class.
+  
+  Args:
+    required_class: The class that the current_user must be an instance of
+    
+  Returns:
+    Decorator function that can be applied to routes
+    
+  Raises:
+    401 Unauthorized if user is not authenticated or not an instance of required_class
+  """
+  def decorator(f):
+    @wraps(f)
+    @jwt_required()
+    def decorated_function(*args, **kwargs):
+      # Check if current_user is an instance of the required class
+      if not isinstance(current_user, required_class):
+        return jsonify({
+          'error': 'Unauthorized', 
+          'message': f'User must be an instance of {required_class.__name__}'
+        }), 401
+      
+      return f(*args, **kwargs)
+    return decorated_function
+  return decorator
 
 def setup_jwt(app):
   jwt = JWTManager(app)

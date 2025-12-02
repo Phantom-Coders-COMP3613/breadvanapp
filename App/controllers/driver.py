@@ -11,12 +11,21 @@ def driver_schedule_drive(driver, area_id, street_id, date_str, time_str):
     except ValueError:
         raise ValueError("Invalid date or time format. Use YYYY-MM-DD and HH:MM.")
     scheduled_datetime = datetime.combine(date, time)
-    if scheduled_datetime < datetime.now():
+    now = datetime.now() 
+    if scheduled_datetime < now:
         raise ValueError("Cannot schedule a drive in the past.")
-    one_year_later = datetime.now() + timedelta(days=60)
-    if scheduled_datetime > one_year_later:
+    
+    sixty_days_later = now + timedelta(days=60)
+
+
+    if scheduled_datetime > sixty_days_later:
         raise ValueError("Cannot schedule a drive more than 60 days in advance.")
+    
+    
     existing_drive = Drive.query.filter_by(areaId=area_id, streetId=street_id, date=date).first()
+    if existing_drive:
+        raise ValueError(f"A drive for this street is already scheduled on {date_str}.")
+    
     new_drive = driver.schedule_drive(area_id, street_id, date_str, time_str)
     return new_drive
 
@@ -38,9 +47,6 @@ def driver_cancel_drive(driver, drive_id):
     
     db.session.commit()
     return drive
-
-def driver_view_drives(driver):
-    return [d for d in driver.view_drives() if d.status in ("Upcoming", "In Progress")]
 
 def driver_start_drive(driver, drive_id):
     current_drive = Drive.query.filter_by(driverId=driver.id, status="In Progress").first()

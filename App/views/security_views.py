@@ -14,7 +14,7 @@ def login():
         return jsonify({'error': 'Missing username or password'}), 400
 
     try:
-        user = user_controller.verify_user(username, password)
+        user = user.verify_user(username, password)
     except Exception:
         return jsonify({'error': 'Authentication service unavailable'}), 500
 

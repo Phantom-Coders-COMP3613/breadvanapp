@@ -1,37 +1,27 @@
-from App.models import User, Driver
+from App.models import *
 from App.database import db
 
-def create_user(username, password):
-    newuser = User(username=username, password=password)
-    db.session.add(newuser)
-    db.session.commit()
-    return newuser
-
-def get_user_by_username(username):
-    result = db.session.execute(db.select(User).filter_by(username=username))
-    return result.scalar_one_or_none()
-
-def get_user(id):
-    return db.session.get(User, id)
-
-def get_all_users():
-    return db.session.scalars(db.select(User)).all()
-
-def get_all_users_json():
-    users = get_all_users()
-    if not users:
-        return []
-    users = [user.get_json() for user in users]
-    return users
-
-def update_user(id, username):
-    user = get_user(id)
-    if user:
-        user.username = username
-        # user is already in the session; no need to re-add
+def create_resident(username, password, area_id, street_id, house_number):
+    newresident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, houseNumber=house_number, scheduleId=1)
+    try:
+        db.session.add(newresident)
         db.session.commit()
-        return True
-    return None
+        return newresident
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating resident: {e}")
+        return None
+
+def create_driver(username, password):
+    newdriver = Driver(username=username, password=password, status="Offline", areaId=None, streetId=None)
+    try:
+        db.session.add(newdriver)
+        db.session.commit()
+        return newdriver
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating driver: {e}")
+        return None
 
 def user_login(username, password):
     user = db.session.execute(db.select(User).filter_by(username=username)).scalar_one_or_none()
@@ -50,5 +40,14 @@ def user_logout(user):
     db.session.commit()
     return user
 
-def user_view_street_drives(user, area_id, street_id):
-    return user.view_street_drives(area_id, street_id)
+def user_view_drives():
+    drives = Drive.query.all()
+    return [d for d in drives if d.status in ("Upcoming", "In Progress")]
+
+def user_view_stock(driver_id):
+    driver = Driver.query.get(driver_id)
+    if not driver:
+        return None
+    # Return all stock entries for this driver
+    stocks = DriverStock.query.filter_by(driverId=driver_id).all()
+    return stocks
