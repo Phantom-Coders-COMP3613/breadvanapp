@@ -1,6 +1,6 @@
 from App.models import Schedule
 from App.database import db
-from App.controllers import *
+from .resident import resident_receive_notification
 
 def schedule_subscribe(resident):
     """

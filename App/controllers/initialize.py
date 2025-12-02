@@ -1,6 +1,9 @@
 from App.database import db
 from App.models import *
-from App.controllers import *
+from .admin import create_area, create_street, create_item, create_schedule
+from .user import create_resident, create_driver
+from .driver import driver_schedule_drive
+from .resident import resident_watch_schedule, resident_request_stop
 
 def initialize():
     db.drop_all()
