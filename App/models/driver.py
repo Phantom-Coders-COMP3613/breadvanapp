@@ -11,7 +11,7 @@ class Driver(User):
 
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(20), nullable=False)
-    areaId = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
+    areaId = db.Column(db.Integer, db.ForeignKey('area.id'))
     streetId = db.Column(db.Integer, db.ForeignKey('street.id'))
 
     area = db.relationship("Area", backref="drivers")

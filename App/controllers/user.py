@@ -13,7 +13,7 @@ def create_resident(username, password, area_id, street_id, house_number):
         return None
 
 def create_driver(username, password):
-    newdriver = Driver(username=username, password=password, status="Offline", areaId=0, streetId=None)
+    newdriver = Driver(username=username, password=password, status="Offline", areaId=None, streetId=None)
     try:
         db.session.add(newdriver)
         db.session.commit()
