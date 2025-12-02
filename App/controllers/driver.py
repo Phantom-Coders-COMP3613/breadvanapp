@@ -1,7 +1,7 @@
 from App.models import *
 from App.database import db
 from datetime import datetime, timedelta
-from App.controllers.schedule import schedule_notify_subscribers
+from .schedule import schedule_notify_subscribers
 
 # All driver-related business logic will be moved here as functions
 

@@ -1,6 +1,5 @@
 from App.models import *
 from App.database import db
-from App.controllers import schedule_subscribe, schedule_unsubscribe
 # All resident-related business logic will be moved here as functions
 
 def resident_request_stop(resident, drive_id):
@@ -29,9 +28,11 @@ def resident_view_driver_status(driver_id):
     return driver
 
 def resident_watch_schedule(resident):
+    from .schedule import schedule_subscribe
     return schedule_subscribe(resident)
 
 def resident_unwatch_schedule(resident):
+    from .schedule import schedule_unsubscribe
     return schedule_unsubscribe(resident)
 
 def resident_view_inbox(resident):
@@ -40,7 +41,7 @@ def resident_view_inbox(resident):
 def resident_receive_notification(resident, message):
     notification = Notification(message=message)
     resident.notifications.append(notification)
-    print(f'{resident.notifications[-1]}')
     db.session.add_all([resident, notification])
     db.session.commit()
+    print(f'{resident.notifications[-1]}')
     return resident.notifications[-1]
