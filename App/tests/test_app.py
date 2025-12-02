@@ -200,7 +200,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
         notif2 = Notification(message=message2, residentId=self.resident.id)
         db.session.add_all([notif1, notif2])
         db.session.commit()
-        notifications = resident_view_notifications(self.resident)
+        notifications = resident_view_inbox(self.resident)
         self.assertEqual(len(notifications), 2)
         self.assertEqual(notifications[0].message, message1)
         self.assertEqual(notifications[1].message, message2)

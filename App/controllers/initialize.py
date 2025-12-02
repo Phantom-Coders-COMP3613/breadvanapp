@@ -17,12 +17,12 @@ def initialize():
 
     create_schedule()
 
-    resident1 = create_resident('Resident1', 'Resident1pass', 1, 15, 123, 1)
-    resident2 = create_resident('Resident2', 'Resident2pass', 2, 27, 422, 1)
-    resident_watch_schedule(1, resident1)
+    resident1 = create_resident('Resident1', 'Resident1pass', 1, 15, 123)
+    resident2 = create_resident('Resident2', 'Resident2pass', 2, 27, 422)
+    resident_watch_schedule(resident1, 1)
 
-    driver1 = create_driver('Driver1', 'Driver1pass', "Offline", 1, 15)
-    driver2 = create_driver('Driver2', 'Driver2pass', "Available", 2, 27)
+    driver1 = create_driver('Driver1', 'Driver1pass')
+    driver2 = create_driver('Driver2', 'Driver2pass')
 
     create_item("Cake", 5.00)
     create_item("Raisin Bread", 12.00)
