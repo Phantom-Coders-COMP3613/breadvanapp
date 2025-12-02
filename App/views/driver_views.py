@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from App.views.auth import auth_views
+from App.api.security import *
 from App.controllers import driver as driver_controller
 from App.controllers import user as user_controller
 from App.views import user as user_views
@@ -63,7 +63,6 @@ def create_drive():
 @jwt_required()
 @role_required('Driver')
 def create_drive_alt():
-    # You can either call the existing function or duplicate the logic
     return create_drive()
     
 @driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
