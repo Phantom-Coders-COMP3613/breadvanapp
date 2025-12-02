@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token # Make sure this is imported
+from App.controllers import user_controller  # import the user controller used below
 
 auth_views = Blueprint('auth_views', __name__)
 
