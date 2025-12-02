@@ -22,3 +22,31 @@ def create_driver(username, password, area_id, street_id, status):
         db.session.rollback()
         print(f"Error creating driver: {e}")
         return None
+
+def user_login(username, password):
+    user = db.session.execute(db.select(User).filter_by(username=username)).scalar_one_or_none()
+    if user and user.check_password(password):
+        user.logged_in = True
+        if isinstance(user, Driver):
+            user.status = "Available"
+        db.session.commit()
+        return user
+    raise ValueError("Invalid username or password.")
+
+def user_logout(user):
+    user.logged_in = False
+    if isinstance(user, Driver):
+        user.status = "Offline"
+    db.session.commit()
+    return user
+
+def user_view_drives():
+    drives = Drive.query.all()
+    return [d for d in drives if d.status in ("Upcoming", "In Progress")]
+
+def user_view_stock(driver_id):
+    driver = Driver.query.get(driver_id)
+    stocks =  DriverStock.query.filter_by(driverId=driver_id).all()
+    if not driver or not stocks:
+        return None
+    return stocks

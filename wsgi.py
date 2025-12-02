@@ -19,8 +19,97 @@ migrate = get_migrate(app)
 @app.cli.command("init", help="Creates and initializes the database")
 def init():
     initialize()
-    print('Welcome to the Bread Van App!')
-    print("For documentation, visit: https://github.com/LiannMaicoo/Bread_Van_CLI_App")
+    db.session.commit()
+    print('database intialized')
+
+# User Commands
+##################################################################################
+user_cli = AppGroup('user', help='User object commands')
+
+@user_cli.command("login", help="Login to the Bread Van App")
+@click.argument("username", default="rob")
+@click.argument("password", default="robpass")
+def login_user_command(username, password):
+    logged_in_users = User.query.filter_by(logged_in=True).all()
+    for u in logged_in_users:
+        user_logout(u)
+    try:
+        user = user_login(username, password)
+        print(f"{user.type} {user.username} logged in!")
+    except ValueError as e:
+        print(str(e))
+
+
+@user_cli.command("logout", help="Logout of the Bread Van App")
+def logout_user_command():
+    user = User.query.filter_by(logged_in=True).first()
+    if not user:
+        print("No user is logged in.")
+        return
+
+    user_logout(user)
+    print(f'{user.username} logged out')
+
+
+@user_cli.command("view_drives", help="View all drives")
+def view_drives_command():
+    user = User.query.filter_by(logged_in=True).first()
+    if not user:
+        print("Must be logged in to perform this action.")
+        return
+
+    drives = user_view_drives()
+    if not drives:
+        print("No drives scheduled for this street.")
+        return
+
+    print(f"\nAll Scheduled Drives:")
+    print("-" * 70)
+    print(f"{'Drive ID':<10} {'Date':<12} {'Time':<8} {'Driver':<20}")
+    print("-" * 70)
+    for drive in drives:
+        date_str = drive.date.strftime("%Y-%m-%d")
+        time_str = drive.time.strftime("%H:%M")
+        print(
+            f"{drive.id:<10} {date_str:<12} {time_str:<8} {drive.driverId:<20}"
+        )
+    print("\n")
+
+@user_cli.command("view_stock", help="View Driver Stock")
+def view_stock_command():
+    user = User.query.filter_by(logged_in=True).first()
+    if not user:
+        print("Must be logged in to perform this action.")
+        return
+
+    drivers = Driver.query.all()
+    if not drivers:
+        print("No drivers available. Please create an driver first.")
+        return
+    print("\nAvailable Drivers:")
+    for i, driver in enumerate(drivers, start=1):
+        print(f"{i}. {driver.name}")
+    chosen_driver_index = click.prompt("Select an area by number", type=int)
+    if chosen_driver_index < 1 or chosen_driver_index > len(drivers):
+        print("Invalid driver choice.")
+        return
+    chosen_driver = drivers[chosen_driver_index - 1]
+
+    stocks = user_view_stock(chosen_driver.id)
+
+    print(f"\nAll stock for driver:{chosen_driver.id}")
+    print("-" * 70)
+    print(f"{'Item ID':<10} {'Item Name':<12} {'Item Price':<8}")
+    print("-" * 70)
+    for stock in stocks:
+        stock.item
+        print(
+            f"{drive.id:<10} {date_str:<12} {time_str:<8} {drive.driverId:<20}"
+        )
+    print("\n")
+
+
+app.cli.add_command(user_cli)
 
 # Driver Commands
 ##################################################################################
