@@ -1,3 +1,4 @@
 FLASK_RUN_PORT=8080
 FLASK_APP=wsgi.py
 FLASK_DEBUG=True
+DATABASE_URL=postgresql://breadvanapp_postgresql_user:9kAlIDy6MXSk0XQpmJz0yAlL8YdYLXll@dpg-d4ngvbvpm1nc73er7fqg-a.oregon-postgres.render.com/breadvanapp_postgresql

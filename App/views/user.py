@@ -13,7 +13,7 @@ user_views = Blueprint('user_views', __name__, template_folder='../templates')
 @user_views.route('/api/resident', methods=['POST'])
 def create_resident_api():
     data = request.json
-    resident = create_resident(data['username'], data['password'], data['area_id'], data['street_id'], data['schedule_id'], data['house_number'])
+    resident = create_resident(data['username'], data['password'], data['area_id'], data['street_id'], data['house_number'])
     if resident:
         return jsonify({'message': f'Resident created successfully with ID: {resident.id}'}), 201
     return jsonify({'error': 'Failed to create resident'}), 400
@@ -21,7 +21,7 @@ def create_resident_api():
 @user_views.route('/api/driver', methods=['POST'])
 def create_driver_api():
     data = request.json
-    driver = create_driver(data['username'], data['password'], data['area_id'], data['street_id'], data['status'])
+    driver = create_driver(data['username'], data['password'])
     if driver:
         return jsonify({'message': f'Driver created successfully with ID: {driver.id}'}), 201
     return jsonify({'error': 'Failed to create driver'}), 400
