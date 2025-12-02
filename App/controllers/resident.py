@@ -1,5 +1,6 @@
 from App.models import *
 from App.database import db
+from App.controllers import schedule_subscribe, schedule_unsubscribe
 # All resident-related business logic will be moved here as functions
 
 def resident_request_stop(resident, drive_id):
@@ -28,31 +29,18 @@ def resident_view_driver_status(driver_id):
     return driver
 
 def resident_watch_schedule(resident):
-    # Use schedule controller to subscribe the resident to the singleton schedule
-    schedule = Schedule.query.first()
-    if not schedule:
-        return None
-    try:
-        from .schedule import schedule_subscribe
-        return schedule_subscribe(schedule.id, resident)
-    except Exception:
-        return None
+    return schedule_subscribe(resident)
 
 def resident_unwatch_schedule(resident):
-    schedule = Schedule.query.first()
-    if not schedule:
-        return None
-    try:
-        from .schedule import schedule_unsubscribe
-        return schedule_unsubscribe(schedule.id, resident)
-    except Exception:
-        return None
+    return schedule_unsubscribe(resident)
 
 def resident_view_inbox(resident):
-    return Notification.query.filter_by(residentId=resident.id).all()
+    return resident.notifications
 
 def resident_receive_notification(resident, message):
-    resident.notifications.append(Notification(message=message, residentId=resident.id))
-    db.session.add(resident)
+    notification = Notification(message=message)
+    resident.notifications.append(notification)
+    print(f'{resident.notifications[-1]}')
+    db.session.add_all([resident, notification])
     db.session.commit()
     return resident.notifications[-1]
