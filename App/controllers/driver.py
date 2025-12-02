@@ -1,6 +1,7 @@
-from App.models import Driver, Drive, Street, Item, DriverStock
+from App.models import *
 from App.database import db
 from datetime import datetime, timedelta
+from App.controllers.schedule import schedule_notify_subscribers
 
 # All driver-related business logic will be moved here as functions
 
@@ -26,8 +27,29 @@ def driver_schedule_drive(driver, area_id, street_id, date_str, time_str):
     if existing_drive:
         raise ValueError(f"A drive for this street is already scheduled on {date_str}.")
     
-    new_drive = driver.schedule_drive(area_id, street_id, date_str, time_str)
-    return new_drive
+    try:
+        date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        time = datetime.strptime(time_str, "%H:%M").time()
+    except Exception:
+        print("Invalid date or time format. Please use YYYY-MM-DD for date and HH:MM for time.")
+        return
+
+    new_drive = Drive(driverId=driver.id, areaId=area_id,streetId=street_id,date=date,time=time,status="Upcoming")
+    db.session.add(new_drive)
+    db.session.commit()
+
+    message = f"SCHEDULED>> Drive {new_drive.id} by Driver {driver.id} on {date} at {time}\n"
+    message += "Items in Stock:\n"
+
+    driverStock = DriverStock.query.filter_by(driverId=driver.id).all()
+    if driverStock:
+        for stock in driverStock:
+            item = stock.item
+            message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
+        schedule_notify_subscribers(message)
+        db.session.commit()
+        return (new_drive)
+    return None
 
 def driver_cancel_drive(driver, drive_id):
     drive = Drive.query.get(drive_id)
@@ -39,14 +61,13 @@ def driver_cancel_drive(driver, drive_id):
 
     street = Street.query.get(drive.streetId)
     if street and street.residents:
-        for resident in street.residents:
-            
-            resident.receive_notif(
-                f"CANCELLED: Drive {drive.id} by {driver.id} on {drive.date} at {drive.time}"
-            )
-    
-    db.session.commit()
-    return drive
+        drive = Drive.query.get(drive_id)
+        if drive:
+            drive.status = "Cancelled"
+            message = f"CANCELLED>> Drive {drive.id} by Driver {driver.id} on {drive.date} at {drive.time}"
+            schedule_notify_subscribers(message)
+            db.session.commit()
+        return None
 
 def driver_start_drive(driver, drive_id):
     current_drive = Drive.query.filter_by(driverId=driver.id, status="In Progress").first()

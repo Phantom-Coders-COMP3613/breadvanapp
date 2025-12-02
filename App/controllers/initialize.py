@@ -1,9 +1,6 @@
 from App.database import db
 from App.models import *
-from .admin import *
-from .user import *
-from .driver import *
-from .resident import *
+from App.controllers import *
 
 def initialize():
     db.drop_all()

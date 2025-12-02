@@ -2,7 +2,7 @@ from App.models import *
 from App.database import db
 
 def create_resident(username, password, area_id, street_id, house_number):
-    newresident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, houseNumber=house_number, scheduleId=1)
+    newresident = Resident(username=username, password=password, areaId=area_id, streetId=street_id, houseNumber=house_number, scheduleId=None)
     try:
         db.session.add(newresident)
         db.session.commit()
