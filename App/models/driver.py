@@ -1,9 +1,5 @@
 from App.database import db
-from datetime import datetime
 from .user import User
-from .drive import Drive
-from .driver_stock import DriverStock
-from .schedule import Schedule
 
 
 class Driver(User):
@@ -33,87 +29,3 @@ class Driver(User):
         user_json['areaId'] = self.areaId
         user_json['streetId'] = self.streetId
         return user_json
-
-    def login(self, password):
-        if super().login(password):
-            self.areaId = 0
-            self.streetId = 0
-            self.status = "Available"
-            db.session.commit()
-            return True
-        return False
-
-    def logout(self):
-        super().logout()
-        self.status = "Offline"
-        db.session.commit()
-
-    def schedule_drive(self, areaId, streetId, date_str, time_str):
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
-            time = datetime.strptime(time_str, "%H:%M").time()
-        except Exception:
-            print("Invalid date or time format. Please use YYYY-MM-DD for date and HH:MM for time.")
-            return
-
-        new_drive = Drive(driverId=self.id,
-                          areaId=areaId,
-                          streetId=streetId,
-                          date=date,
-                          time=time,
-                          status="Upcoming")
-        db.session.add(new_drive)
-        db.session.commit()
-
-        message = f"SCHEDULED>> Drive {new_drive.id} by Driver {self.id} on {date} at {time}\n"
-        message += "Items in Stock:\n"
-
-        driverStock = DriverStock.query.filter_by(driverId=self.id).all()
-        schedule = Schedule.query.first()
-        if driverStock and schedule:
-            for stock in driverStock:
-                item = stock.item
-                message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
-            schedule.notify_subscribers(message)
-            db.session.commit()
-            return (new_drive)
-        return None
-
-    def cancel_drive(self, driveId, scheduleId):
-        drive = Drive.query.get(driveId)
-        schedule = Schedule.query.get(scheduleId)
-        if drive and schedule:
-            drive.status = "Cancelled"
-            message = f"CANCELLED>> Drive {drive.id} by Driver {self.id} on {drive.date} at {drive.time}"
-            schedule.notify_subscribers(message)
-            db.session.commit()
-        return None
-
-    def view_drives(self):
-        return Drive.query.filter_by(driverId=self.id).all()
-
-    def start_drive(self, driveId):
-        drive = Drive.query.get(driveId)
-        if drive:
-            self.status = "Busy"
-            self.areaId = drive.areaId
-            self.streetId = drive.streetId
-            drive.status = "In Progress"
-            db.session.commit()
-            return drive
-        return None
-
-    def end_drive(self, driveId):
-        drive = Drive.query.get(driveId)
-        if drive:
-            self.status = "Available"
-            drive.status = "Completed"
-            db.session.commit()
-            return drive
-        return None
-
-    def view_requested_stops(self, driveId):
-        drive = Drive.query.get(driveId)
-        if drive:
-            return drive.stops
-        return None
