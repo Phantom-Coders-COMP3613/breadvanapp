@@ -48,7 +48,7 @@ class Driver(User):
         self.status = "Offline"
         db.session.commit()
 
-    def schedule_drive(self, scheduleId, areaId, streetId, date_str, time_str):
+    def schedule_drive(self, areaId, streetId, date_str, time_str):
         try:
             date = datetime.strptime(date_str, "%Y-%m-%d").date()
             time = datetime.strptime(time_str, "%H:%M").time()
@@ -70,6 +70,7 @@ class Driver(User):
         message = f"SCHEDULED>> Drive {new_drive.id} by Driver {self.id} on {date} at {time}\n"
         message += "Items in Stock:\n"
 
+        '''
         driverStock = DriverStock.query.filter_by(driverId=self.id).all()
         schedule = Schedule.query.get(scheduleId)
         if driverStock and schedule:
@@ -80,6 +81,8 @@ class Driver(User):
             db.session.commit()
             return (new_drive)
         return None
+        '''
+        return new_drive
 
     def cancel_drive(self, driveId, scheduleId):
         drive = Drive.query.get(driveId)
