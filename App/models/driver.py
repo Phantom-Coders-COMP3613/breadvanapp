@@ -1,5 +1,4 @@
 from App.database import db
-from datetime import datetime
 from .user import User
 from .drive import Drive
 from .driver_stock import DriverStock

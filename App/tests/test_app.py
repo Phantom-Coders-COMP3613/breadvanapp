@@ -147,9 +147,9 @@ class ResidentsIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.area = Area("St. Augustine")
         self.street = Street(self.area.id, "Warner Street")
-        self.driver = Driver("driver1", "pass")
+        self.driver = Driver("driver1", "pass","Available",self.area.id,self.street.id)
         self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123,1)
-        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
+        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30:10", "Upcoming")
         self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
 
 
@@ -168,7 +168,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
 
     def test_view_stock(self):
         driver_update_stock(self.driver, self.item.id, 30)
-        stock = resident_view_stock(self.resident, self.driver.id)
+        stock = resident_view_stock(self.resident, self.driver.id) # type: ignore
         self.assertIsNotNone(stock)
 
     def test_update(self):
@@ -200,7 +200,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
         notif2 = Notification(message=message2, residentId=self.resident.id)
         db.session.add_all([notif1, notif2])
         db.session.commit()
-        notifications = resident_view_inbox(self.resident)
+        notifications = resident_view_notifications(self.resident) # type: ignore
         self.assertEqual(len(notifications), 2)
         self.assertEqual(notifications[0].message, message1)
         self.assertEqual(notifications[1].message, message2)
@@ -233,7 +233,7 @@ class DriversIntegrationTests(unittest.TestCase):
         assert drive.status == "Cancelled"
 
     def test_view_drives(self):
-        drives = driver_view_drives(self.driver)
+        drives = driver_view_drives(self.driver) # type: ignore
         self.assertIsNotNone(drives)
 
     def test_start_drive(self):
