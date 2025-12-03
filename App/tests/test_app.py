@@ -142,11 +142,13 @@ def empty_db():
 class ResidentsIntegrationTests(unittest.TestCase):
     
     def setUp(self):
+        self.schedule = create_schedule()
         self.area = create_area("St. Augustine")
         self.street = create_street(self.area.id, "Warner Street")
         self.driver = create_driver("driver1", "pass")
         self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
         self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
+
 
     def test_request_stop(self):
         print(self.resident.id)
@@ -208,6 +210,7 @@ class ResidentsIntegrationTests(unittest.TestCase):
 class DriversIntegrationTests(unittest.TestCase):
 
     def setUp(self):
+        self.schedule = create_schedule()
         self.area = create_area("St. Augustine")
         self.street = create_street(self.area.id, "Warner Street")
         self.driver = create_driver("driver1", "pass")
@@ -255,6 +258,7 @@ class DriversIntegrationTests(unittest.TestCase):
 class UserIntegrationTests(unittest.TestCase):
 
     def setUp(self):
+        self.schedule = create_schedule()
         self.area = create_area("St. Augustine")
         self.street = create_street(self.area.id, "Warner Street")
         self.driver = create_driver("driver1", "pass")
