@@ -147,18 +147,19 @@ class ResidentsIntegrationTests(unittest.TestCase):
         self.street = create_street(self.area.id, "Warner Street")
         self.driver = create_driver("driver1", "pass")
         self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
-        self.drive = driver_schedule_drive(self.driver,1,self.area.id, self.street.id, "2025-12-25", "11:30")
-        self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
+        self.item = Item("Whole-Grain Bread", 19.50)
 
 
     def test_request_stop(self):
+
         stop = resident_request_stop(self.resident, self.drive.id)
         self.assertIsNotNone(stop)
 
     def test_cancel_stop(self):
         stop = resident_request_stop(self.resident, self.drive.id)
-        resident_cancel_stop(self.resident, stop.id)
-        self.assertIsNone(Stop.query.filter_by(id=stop.id).first())
+        resident_cancel_stop(self.resident, self.stop.id)
+        self.assertIsNone(Stop.query.filter_by(id=self.stop.id).first())
 
     def test_view_driver_status(self):
         driver = resident_view_driver_status(self.resident, self.driver.id)
@@ -212,21 +213,22 @@ class ResidentsIntegrationTests(unittest.TestCase):
         self.assertEqual(self.resident.notifications[-1].message, message)
 
 class DriversIntegrationTests(unittest.TestCase):
+
     def setUp(self):
         self.area = Area("St. Augustine")
         self.street = Street(self.area.id, "Warner Street")
-        self.driver = Driver("driver1", "pass")
-        self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123)
-        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
-        self.stop = Stop(self.resident, self.drive.id)
-        self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        self.driver = Driver("driver1", "pass","Available", self.area.id,self.street.id)
+        self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123,1)
+        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-12-25", "11:30", "Upcoming")
+        self.stop = Stop(self.drive.id,self.resident.id)
+        self.item = Item("Whole-Grain Bread", 19.50)
 
     def test_schedule_drive(self):
-        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-30", "09:00")
+        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-12-25", "09:00")
         self.assertIsNotNone(drive)
 
     def test_cancel_drive(self):
-        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-13", "08:15")
+        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-12-25", "08:15")
         driver_cancel_drive(self.driver, drive.id)
         assert drive.status == "Cancelled"
 
