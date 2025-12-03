@@ -70,8 +70,9 @@ def driver_schedule_drive(driver, area_id, street_id, date_str, time_str):
             message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
         schedule_notify_subscribers(message)
         db.session.commit()
-        return (new_drive)
-    return None
+
+    return (new_drive)
+    
 
 def driver_cancel_drive(driver, drive_id):
     """
