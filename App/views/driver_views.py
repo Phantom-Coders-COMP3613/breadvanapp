@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, current_user
 from App.views.auth import auth_views
 from App.views import user as user_views
 from App.controllers import *
+from App.api.security import role_required
 
 driver_views = Blueprint('driver_views', __name__)
 
