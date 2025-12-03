@@ -1,59 +1,58 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, current_user
 from App.views.auth import auth_views
 from App.controllers import driver as driver_controller
 from App.controllers import user as user_controller
 from App.views import user as user_views
 from App.controllers import *
 
-driver_views = Blueprint('driver_views', __name__, url_prefix='/driver')
+driver_views = Blueprint('driver_views', __name__, url_prefix='/api/driver')
 
 
-@driver_views.route('/api/driver/me', methods=['GET'])
+@driver_views.route('/me', methods=['GET'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def me():
-    uid = current_user_id()
-    return jsonify({'id': uid}), 200
+    return jsonify({'id': current_user.id}), 200
 
 
 @driver_views.route('/api/driver/drives', methods=['GET'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def list_drives():
     params = request.args
     page = int(params.get('page', 1))
     page_size = int(params.get('page_size', 20))
-    uid = current_user_id()
-    driver = user_controller.get_user(uid)
+    
+    
+    driver = current_user
     drives = driver_controller.driver_view_drives(driver)
-    total = len(drives) if drives else 0
+
+    total = len(drives or [])
     start = (page - 1) * page_size
+    
     items = [d.get_json() if hasattr(d, 'get_json') else d for d in (drives or [])[start:start+page_size]]
     return jsonify({'items': items, 'page': page, 'total': total}), 200
 
 
-@driver_views.route('/drives', methods=['POST'])
+@driver_views.route('/api/driver/drives', methods=['POST'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def create_drive():
     data = request.get_json() or {}
-    area_id = data.get('area_id')
-    street_id = data.get('street_id')
-    date = data.get('date')
-    time = data.get('time')
-    
-    if not street_id or not date or not time:
+
+    required= ['street_id', 'date', 'time']
+    missing= [f for f in required if f not in data.get(f)]
+    if missing:
         return jsonify({
             'error': {
                 'code': 'validation_error', 
-                'message': 'street_id, date, and time are required'
+                'message': f'Missing required fields: {", ".join(missing)}'
             }
         }), 422
     
-    uid = current_user_id()
-    driver = user_controller.get_user(uid)
-    drive = driver_controller.driver_schedule_drive(driver, area_id, street_id, date, time)
+    driver = current_user
+    drive = driver_controller.driver_schedule_drive(driver, data.get('area_id'),data.get('street_id'), data.get('date'), data.get('time'))
     
 
     out = drive.get_json() if hasattr(drive, 'get_json') else drive
@@ -61,40 +60,45 @@ def create_drive():
     
 @driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def start_drive(drive_id):
-    uid = current_user_id()
-    driver = user_controller.get_user(uid)
-    driver_controller.driver_start_drive(driver, drive_id)
-    return jsonify({'id': drive_id, 'status': 'started'}), 200
+        try:
+            driver= driver_controller.driver_start_drive(current_user, drive_id)
+            if not driver:
+                return jsonify({
+                    "error": {
+                    "code": "not_found",
+                    "message": "Drive does not exist"
+                    }
+        }), 404
+    
+            return jsonify({'id': drive_id, 'status': 'started'}), 200
+        except ValueError as e:  # Catch controller errors
+            return jsonify({'error': {'code': 'not_found', 'message': str(e)}}), 404
+        except Exception as e:
+            return jsonify({'error': {'code': 'internal_error', 'message': str(e)}}), 500
 
 
-@driver_views.route('/api/driver/drives/<int:drive_id>/end', methods=['POST'])
+@driver_views.route('/drives/<int:drive_id>/end', methods=['POST'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def end_drive(drive_id):
-    uid = current_user_id()
-    driver = user_controller.get_user(uid)
-    res = driver_controller.driver_end_drive(driver)
-    return jsonify({'id': getattr(res, 'id', drive_id), 'status': 'ended'}), 200
+    results = driver_controller.driver_end_drive(current_user)
+    return jsonify({'id': getattr(results, 'id', drive_id), 'status': 'ended'}), 200
 
 
-@driver_views.route('/api/driver/drives/<int:drive_id>/cancel', methods=['POST'])
+@driver_views.route('/drives/<int:drive_id>/cancel', methods=['POST'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def cancel_drive(drive_id):
-    uid = current_user_id()
-    driver = user_controller.get_user(uid)
-    driver_controller.driver_cancel_drive(driver, drive_id)
+    driver_controller.driver_cancel_drive(current_user, drive_id)
     return jsonify({'id': drive_id, 'status': 'cancelled'}), 200
 
 
-@driver_views.route('/api/driver/drives/<int:drive_id>/requested-stops', methods=['GET'])
+@driver_views.route('/drives/<int:drive_id>/requested-stops', methods=['GET'])
 @jwt_required()
-@login_required('Driver')
+@login_required(Driver)
 def requested_stops(drive_id):
-    uid = current_user_id()
-    driver = user_controller.get_user(uid)
-    stops = driver_controller.driver_view_requested_stops(driver, drive_id)
+    stops = driver_controller.driver_view_requested_stops(current_user, drive_id)
     items = [s.get_json() if hasattr(s, 'get_json') else s for s in (stops or [])]
     return jsonify({'items': items}), 200
