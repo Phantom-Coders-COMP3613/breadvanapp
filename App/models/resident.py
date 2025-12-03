@@ -16,7 +16,7 @@ class Resident(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     areaId = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
     streetId = db.Column(db.Integer,db.ForeignKey('street.id'),nullable=False)
-    scheduleId = db.Column(db.Integer,db.ForeignKey('schedule.id'),nullable=False)
+    scheduleId = db.Column(db.Integer,db.ForeignKey('schedule.id'))
     houseNumber = db.Column(db.Integer, nullable=False)
 
     area = db.relationship("Area", backref='residents')

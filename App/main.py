@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template
+from dotenv import load_dotenv
+from flask import Flask, app, render_template
 from flask_uploads import DOCUMENTS, IMAGES, TEXT, UploadSet, configure_uploads
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -25,6 +26,8 @@ def add_views(app):
     # API views live under App/views and are registered above
 
 def create_app(overrides={}):
+    # Ensure environment variables from .flaskenv/.env are loaded when app is created
+    load_dotenv()
     app = Flask(__name__, static_url_path='/static')
     load_config(app, overrides)
     CORS(app)

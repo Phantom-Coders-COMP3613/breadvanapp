@@ -57,6 +57,12 @@ def create_drive():
 
     out = drive.get_json() if hasattr(drive, 'get_json') else drive
     return jsonify(out), 201
+
+@driver_views.route('/driver/drives', methods=['POST'])
+@jwt_required()
+@role_required('Driver')
+def create_drive_alt():
+    return create_drive()
     
 @driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
 @jwt_required()

@@ -1,9 +1,7 @@
 from App.database import db
-from datetime import datetime
 from .user import User
 from .drive import Drive
 from .driver_stock import DriverStock
-from .schedule import Schedule
 
 
 class Driver(User):
@@ -11,7 +9,7 @@ class Driver(User):
 
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     status = db.Column(db.String(20), nullable=False)
-    areaId = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
+    areaId = db.Column(db.Integer, db.ForeignKey('area.id'))
     streetId = db.Column(db.Integer, db.ForeignKey('street.id'))
 
     area = db.relationship("Area", backref="drivers")
@@ -47,49 +45,6 @@ class Driver(User):
         super().logout()
         self.status = "Offline"
         db.session.commit()
-
-    def schedule_drive(self, scheduleId, areaId, streetId, date_str, time_str):
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
-            time = datetime.strptime(time_str, "%H:%M").time()
-        except Exception:
-            print(
-                "Invalid date or time format. Please use YYYY-MM-DD for date and HH:MM for time."
-            )
-            return
-
-        new_drive = Drive(driverId=self.id,
-                          areaId=areaId,
-                          streetId=streetId,
-                          date=date,
-                          time=time,
-                          status="Upcoming")
-        db.session.add(new_drive)
-        db.session.commit()
-
-        message = f"SCHEDULED>> Drive {new_drive.id} by Driver {self.id} on {date} at {time}\n"
-        message += "Items in Stock:\n"
-
-        driverStock = DriverStock.query.filter_by(driverId=self.id).all()
-        schedule = Schedule.query.get(scheduleId)
-        if driverStock and schedule:
-            for stock in driverStock:
-                item = stock.item
-                message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
-            schedule.notify_subscribers(message)
-            db.session.commit()
-            return (new_drive)
-        return None
-
-    def cancel_drive(self, driveId, scheduleId):
-        drive = Drive.query.get(driveId)
-        schedule = Schedule.query.get(scheduleId)
-        if drive and schedule:
-            drive.status = "Cancelled"
-            message = f"CANCELLED>> Drive {drive.id} by Driver {self.id} on {drive.date} at {drive.time}"
-            schedule.notify_subscribers(message)
-            db.session.commit()
-        return None
 
     def view_drives(self):
         return Drive.query.filter_by(driverId=self.id).all()

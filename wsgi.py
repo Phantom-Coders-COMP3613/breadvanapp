@@ -19,13 +19,112 @@ migrate = get_migrate(app)
 @app.cli.command("init", help="Creates and initializes the database")
 def init():
     initialize()
-    print('Welcome to the Bread Van App!')
-    print("For documentation, visit: https://github.com/LiannMaicoo/Bread_Van_CLI_App")
+    print('database intialized')
+
+# User Commands
+##################################################################################
+user_cli = AppGroup('user', help='User object commands')
+
+@user_cli.command("login", help="Login to the Bread Van App")
+@click.argument("username", default="rob")
+@click.argument("password", default="robpass")
+def login_user_command(username, password):
+    logged_in_users = User.query.filter_by(logged_in=True).all()
+    for u in logged_in_users:
+        user_logout(u)
+    try:
+        user = user_login(username, password)
+        print(f"{user.type} {user.username} logged in!")
+    except ValueError as e:
+        print(str(e))
+
+
+@user_cli.command("logout", help="Logout of the Bread Van App")
+def logout_user_command():
+    user = User.query.filter_by(logged_in=True).first()
+    if not user:
+        print("No user is logged in.")
+        return
+
+    user_logout(user)
+    print(f'{user.username} logged out')
+
+
+@user_cli.command("view_drives", help="View all drives")
+def view_drives_command():
+    user = User.query.filter_by(logged_in=True).first()
+    if not user:
+        print("Must be logged in to perform this action.")
+        return
+
+    drives = user_view_drives()
+    if not drives:
+        print("No drives scheduled for this street.")
+        return
+
+    print(f"\nAll Scheduled Drives:")
+    print("-" * 70)
+    print(f"{'Drive ID':<10} {'Date':<12} {'Time':<8} {'Driver':<20}")
+    print("-" * 70)
+    for drive in drives:
+        date_str = drive.date.strftime("%Y-%m-%d")
+        time_str = drive.time.strftime("%H:%M")
+        print(
+            f"{drive.id:<10} {date_str:<12} {time_str:<8} {drive.driverId:<20}"
+        )
+    print("\n")
+
+@user_cli.command("view_stock", help="View Driver Stock")
+def view_stock_command():
+    user = User.query.filter_by(logged_in=True).first()
+    if not user:
+        print("Must be logged in to perform this action.")
+        return
+
+    drivers = Driver.query.all()
+    if not drivers:
+        print("No drivers available. Please create an driver first.")
+        return
+    print("\nAvailable Drivers:")
+    for i, driver in enumerate(drivers, start=1):
+        print(f"{i}. {driver.username}")
+    chosen_driver_index = click.prompt("Select a driver by number", type=int)
+    if chosen_driver_index < 1 or chosen_driver_index > len(drivers):
+        print("Invalid driver choice.")
+        return
+    chosen_driver = drivers[chosen_driver_index - 1]
+
+    stocks = user_view_stock(chosen_driver.id)
+
+    if not stocks:
+        print(f"No stock found for driver {chosen_driver.username}.")
+        return
+
+    print(f"\nAll stock for driver: {chosen_driver.username} (id: {chosen_driver.id})")
+    print("-" * 70)
+    print(f"{'Item ID':<10} {'Item Name':<20} {'Quantity':<10} {'Item Price':<10}")
+    print("-" * 70)
+    for s in stocks:
+        item = s.item
+        qty = getattr(s, 'quantity', None)
+        print(
+            f"{item.id:<10} {item.name:<20} {qty!s:<10} {item.price:<10}"
+        )
+    print("\n")
+
+
+app.cli.add_command(user_cli)
 
 # Driver Commands
 ##################################################################################
 driver_cli = AppGroup('driver', help='Driver object commands')
 
+@driver_cli.command("create_driver", help="Creates a driver")
+@click.argument("username")
+@click.argument("password")
+def create_driver_command(username, password):
+    driver = create_driver(username, password)
+    print(f"Driver {driver.username} created!")
 
 @driver_cli.command("schedule_drive", help="Schedule a drive")
 @click.argument("date_str")
@@ -74,25 +173,6 @@ def cancel_drive_command(drive_id):
     driver_cancel_drive(driver, drive_id)
     print(f"Drive {drive_id} cancelled.")
 
-@driver_cli.command("view_my_drives", help="View driver's scheduled drives")
-def view_drives_command():
-    driver = require_driver()
-    if not driver:
-        return
-    drives = driver_view_drives(driver)
-    if not drives:
-        print("No scheduled drives.")
-        return
-    print("\nYour Scheduled Drives:")
-    print("-" * 70)
-    print(f"{'Drive ID':<10} {'Date':<12} {'Time':<8} {'Area':<20} {'Street':<20}")
-    print("-" * 70)
-    for drive in drives:
-        date_str = drive.date.strftime("%Y-%m-%d")
-        time_str = drive.time.strftime("%H:%M")
-        print(f"{drive.id:<10} {date_str:<12} {time_str:<8} {drive.area.name:<20} {drive.street.name:<20}")
-    print("\n")
-
 @driver_cli.command("start_drive", help="Start a drive")
 @click.argument("drive_id")
 def start_drive_command(drive_id):
@@ -130,6 +210,34 @@ def view_requested_stops_command(driveId):
     for stop in stops:
         print(f"#{stop.resident.houseNumber} \tResident: {stop.resident.username}")
 
+@driver_cli.command("update_stock", help="Update driver stock")
+def update_stock_command():
+    driver = require_driver()
+    if not driver:
+        return
+    
+    items = Item.query.all()
+    if not items:
+        print("No items available. Please create items first.")
+        return
+    
+    print("\nAvailable Items:")
+    for i, item in enumerate(items, start=1):
+        print(f"{i}. {item.name} - ${item.price}")
+    
+    chosen_item_index = click.prompt("Select an item by number", type=int)
+    if chosen_item_index < 1 or chosen_item_index > len(items):
+        print("Invalid item choice.")
+        return
+    chosen_item = items[chosen_item_index - 1]
+    
+    quantity = click.prompt("Enter quantity", type=int)
+    try:
+        stock = driver_update_stock(driver, chosen_item.id, quantity)
+        print(f"Stock updated: {stock.quantity} units of {chosen_item.name}")
+    except ValueError as e:
+        print(str(e))
+
 
 app.cli.add_command(driver_cli)
 
@@ -138,7 +246,7 @@ app.cli.add_command(driver_cli)
 resident_cli = AppGroup('resident', help='Resident object commands')
 
 
-@resident_cli.command("create", help="Creates a resident")
+@resident_cli.command("create_resident", help="Creates a resident")
 @click.argument("username")
 @click.argument("password")
 def create_resident_command(username, password):
@@ -167,7 +275,7 @@ def create_resident_command(username, password):
         return
     chosen_street = streets[chosen_index - 1]
     house_number = click.prompt("Enter your house number", type=int)
-    resident = resident_create(username, password, chosen_area.id, chosen_street.id, house_number)
+    resident = create_resident(username, password, chosen_area.id, chosen_street.id, house_number)
     print(f"Resident {username} created at #{house_number} {chosen_street.name}, {chosen_area.name}")
 
 @resident_cli.command("request_stop", help="Requests a Stop from a drive on the resident's street")
@@ -216,29 +324,55 @@ def view_inbox_command():
     if inbox:
         print("Inbox Notifications:")
         for notif in inbox:
-            print(notif)
+            print(f"  - {notif}")
     else:
         print("Your inbox is empty.")
 
-@resident_cli.command("view_driver_stats", help="View the status and location of a driver")
+@resident_cli.command("view_driver_status", help="View the status and location of a driver")
 @click.argument("driver_id")
-def view_driver_stats_command(driver_id):
+def view_driver_status_command(driver_id):
     resident = require_resident()
     if not resident:
         return
-    try:
-        driver = resident_view_driver_stats(resident, driver_id)
-        if driver.status == "Offline":
-            print(f"Driver {driver.username} is currently offline.")
-        elif driver.status == "Available":
-            area = Area.query.get(driver.areaId)
-            print(f"Driver {driver.username} is currently available at {area.name}")
-        elif driver.status == "Busy":
-            area = Area.query.get(driver.areaId)
-            street = Street.query.get(driver.streetId)
-            print(f"Driver {driver.username} is currently on a drive at {street.name}, {area.name}")
-    except ValueError as e:
-        print(str(e))
+
+    driver = resident_view_driver_status(driver_id)
+    if not driver:
+        print(f"Driver {driver_id} not found.")
+        return
+    
+    if driver.status == "Offline":
+        print(f"Driver {driver.username} is currently offline.")
+    elif driver.status == "Available":
+        area = Area.query.get(driver.areaId)
+        print(f"Driver {driver.username} is currently available at {area.name if area else 'Unknown Area'}")
+    elif driver.status == "Busy":
+        area = Area.query.get(driver.areaId)
+        street = Street.query.get(driver.streetId)
+        print(f"Driver {driver.username} is currently on a drive at {street.name if street else 'Unknown Street'}, {area.name if area else 'Unknown Area'}")
+
+@resident_cli.command("watch_schedule", help="Watch a schedule to get notified when routes are scheduled")
+def watch_schedule_command():
+    resident = require_resident()
+    if not resident:
+        return
+
+    result = resident_watch_schedule(resident)
+    if result is not None:
+        print(f"{resident.username} was subscribed to the Bread Van Schedule.")
+    else:
+        print(f"Failed to subscribe {resident.username} to the schedule.")
+
+@resident_cli.command("unwatch_schedule", help="Unwatch a schedule to stop receiving notifications when routes are scheduled")
+def unwatch_schedule_command():
+    resident = require_resident()
+    if not resident:
+        return
+
+    result = resident_unwatch_schedule(resident)
+    if result is not None:
+        print(f"{resident.username} was unsubscribed from the Bread Van Schedule.")
+    else:
+        print(f"Failed to unsubscribe {resident.username} from the schedule.")
 
 
 app.cli.add_command(resident_cli)
@@ -246,18 +380,6 @@ app.cli.add_command(resident_cli)
 
 # Helper Commands
 ##################################################################################
-def require_admin():
-    user = User.query.filter_by(logged_in=True).first()
-    if not user:
-        print("Must be logged in first.")
-        return None
-
-    if isinstance(user, Admin):
-        return user
-
-    print("Must be logged in as a admin to perform this action.")
-    return None
-
 
 def require_driver():
     user = User.query.filter_by(logged_in=True).first()

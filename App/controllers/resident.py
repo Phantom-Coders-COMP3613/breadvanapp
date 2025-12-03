@@ -27,23 +27,21 @@ def resident_view_driver_status(driver_id):
         return None
     return driver
 
-def resident_watch_schedule(resident, scheduleId):
-    schedule= Schedule.query.get(scheduleId)
-    if not schedule:
-        return None
-    return schedule.subscribe(resident)
+def resident_watch_schedule(resident):
+    from .schedule import schedule_subscribe
+    return schedule_subscribe(resident)
 
-def resident_unwatch_schedule(resident,scheduleId):
-    schedule= Schedule.query.get(scheduleId)
-    if not schedule:
-        return None
-    return schedule.unsubscribe(resident)
+def resident_unwatch_schedule(resident):
+    from .schedule import schedule_unsubscribe
+    return schedule_unsubscribe(resident)
 
-def resident_view_notifications(resident):
-    return Notification.query.filter_by(residentId=resident.id).all()
+def resident_view_inbox(resident):
+    return resident.notifications
 
 def resident_receive_notification(resident, message):
-    resident.notifications.append(Notification(message=message, residentId=resident.id))
-    db.session.add(resident)
+    notification = Notification(message=message)
+    resident.notifications.append(notification)
+    db.session.add_all([resident, notification])
     db.session.commit()
+    print(f'{resident.notifications[-1]}')
     return resident.notifications[-1]
