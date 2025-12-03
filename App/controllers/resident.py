@@ -15,8 +15,8 @@ def resident_request_stop(resident, drive_id):
 
 def resident_cancel_stop(resident, drive_id):
     stop = Stop.query.filter_by(driveId=drive_id, residentId=resident.id).first()
-    if not stop:
-        return None
+    #if not stop:
+    #   return None
     db.session.delete(stop)
     db.session.commit()
     return stop

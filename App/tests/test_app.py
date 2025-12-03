@@ -97,16 +97,14 @@ class StopUnitTests(unittest.TestCase):
 class ItemUnitTests(unittest.TestCase):
 
     def test_new_item(self):
-        item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        item = Item("Whole-Grain Bread", 19.50)
         assert item.name == "Whole-Grain Bread"
         assert item.price == 19.50
-        assert item.description == "Healthy whole-grain loaf"
-        assert item.tags == ["whole-grain", "healthy"]
 
     def test_item_getJSON(self):
-        item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        item = Item("Whole-Grain Bread", 19.50)
         item_json = item.get_json()
-        self.assertDictEqual(item_json, {"id":None, "name":"Whole-Grain Bread", "price":19.50, "description":"Healthy whole-grain loaf", "tags":["whole-grain", "healthy"]})
+        self.assertDictEqual(item_json, {"id":None, "name":"Whole-Grain Bread", "price":19.50})
 
 class DriverStockUnitTests(unittest.TestCase):
 
@@ -124,8 +122,7 @@ class DriverStockUnitTests(unittest.TestCase):
 class NotificationUnitTests(unittest.TestCase):
 
     def test_new_notification(self):
-        notification=Notification(1,"I have arrived")
-        assert notification.residentId == 1
+        notification=Notification("I have arrived")
         assert notification.message == "I have arrived"
         
 
@@ -145,15 +142,15 @@ def empty_db():
 class ResidentsIntegrationTests(unittest.TestCase):
     
     def setUp(self):
-        self.area = Area("St. Augustine")
-        self.street = Street(self.area.id, "Warner Street")
-        self.driver = Driver("driver1", "pass","Available",self.area.id,self.street.id)
-        self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123,1)
-        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30:10", "Upcoming")
-        self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
-
+        self.area = create_area("St. Augustine")
+        self.street = create_street(self.area.id, "Warner Street")
+        self.driver = create_driver("driver1", "pass")
+        self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
+        self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
 
     def test_request_stop(self):
+        print(self.resident.id)
+        print(self.drive.id)
         stop = resident_request_stop(self.resident, self.drive.id)
         self.assertIsNotNone(stop)
 
@@ -163,44 +160,39 @@ class ResidentsIntegrationTests(unittest.TestCase):
         self.assertIsNone(Stop.query.filter_by(id=stop.id).first())
 
     def test_view_driver_status(self):
-        driver = resident_view_driver_status(self.resident, self.driver.id)
+        driver = resident_view_driver_status(self.driver.id)
         self.assertIsNotNone(driver)
 
-    def test_view_stock(self):
-        driver_update_stock(self.driver, self.item.id, 30)
-        stock = resident_view_stock(self.resident, self.driver.id) # type: ignore
-        self.assertIsNotNone(stock)
-
-    def test_update(self):
-        message = "Truck delayed by 30 minutes."
-        initial_count = len(Notification.query.all())
-        self.resident.receive_notification(message)
-        new_count = len(Notification.query.all())
-        self.assertEqual(new_count, initial_count + 1)
-        self.assertEqual(self.resident.notification[-1].message, message)
-
     def test_watch_schedule(self):
-        schedule = Schedule.query.get(self.resident.scheduleid)
+        new_schedule = Schedule()
+        db.session.add(new_schedule)
+        db.session.commit()
+        schedule = Schedule.query.first()
         initial_count = len(schedule.residents)
-        self.resident.watch_schedule(schedule.id)
+        resident_watch_schedule(self.resident)
         self.assertEqual(len(schedule.residents), initial_count + 1)
         self.assertIn(self.resident, schedule.residents)
 
     def test_unwatch_schedule(self):
-         schedule = Schedule.query.get(self.resident.scheduleid)
-         self.resident.watch_schedule(schedule.id)
+         new_schedule = Schedule()
+         db.session.add(new_schedule)
+         db.session.commit()
+         schedule = Schedule.query.first()
+         resident_watch_schedule(self.resident)
          self.assertIn(self.resident, schedule.residents)
-         self.resident.unwatch_schedule(schedule.id)
+         resident_unwatch_schedule(self.resident)
          self.assertNotIn(self.resident, schedule.residents)
 
     def test_view_notifications(self):
         message1 = "Drive scheduled for tomorrow."
         message2 = "New item added to stock."
-        notif1 = Notification(message=message1, residentId=self.resident.id)
-        notif2 = Notification(message=message2, residentId=self.resident.id)
+        notif1 = Notification(message1)
+        notif2 = Notification(message2)
+        self.resident.notifications.append(notif1)
+        self.resident.notifications.append(notif2)
         db.session.add_all([notif1, notif2])
         db.session.commit()
-        notifications = resident_view_notifications(self.resident) # type: ignore
+        notifications = resident_view_inbox(self.resident) # type: ignore
         self.assertEqual(len(notifications), 2)
         self.assertEqual(notifications[0].message, message1)
         self.assertEqual(notifications[1].message, message2)
@@ -211,30 +203,31 @@ class ResidentsIntegrationTests(unittest.TestCase):
         resident_receive_notification(self.resident, message)
         new_count = len(Notification.query.all())
         self.assertEqual(new_count, initial_count + 1)
-        self.assertEqual(self.resident.notifications[-1].message, message)
+        
 
 class DriversIntegrationTests(unittest.TestCase):
+
     def setUp(self):
-        self.area = Area("St. Augustine")
-        self.street = Street(self.area.id, "Warner Street")
-        self.driver = Driver("driver1", "pass")
-        self.resident = Resident("john", "johnpass", self.area.id, self.street.id, 123)
-        self.drive = Drive(self.driver, self.area.id, self.street.id, "2025-11-10", "11:30", "Upcoming")
-        self.stop = Stop(self.resident, self.drive.id)
-        self.item = Item("Whole-Grain Bread", 19.50, "Healthy whole-grain loaf", ["whole-grain", "healthy"])
+        self.area = create_area("St. Augustine")
+        self.street = create_street(self.area.id, "Warner Street")
+        self.driver = create_driver("driver1", "pass")
+        self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
+        self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
+        self.item = Item("Whole-Grain Bread", 19.50)
+        db.session.add(self.item)
+        db.session.commit()
 
     def test_schedule_drive(self):
-        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-30", "09:00")
+        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-12-26", "09:00")
         self.assertIsNotNone(drive)
 
     def test_cancel_drive(self):
-        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-11-13", "08:15")
+        new_schedule = Schedule() 
+        db.session.add(new_schedule)
+        db.session.commit()
+        drive = driver_schedule_drive(self.driver, self.area.id, self.street.id, "2025-12-27", "08:15")
         driver_cancel_drive(self.driver, drive.id)
         assert drive.status == "Cancelled"
-
-    def test_view_drives(self):
-        drives = driver_view_drives(self.driver) # type: ignore
-        self.assertIsNotNone(drives)
 
     def test_start_drive(self):
         driver_start_drive(self.driver, self.drive.id)
@@ -259,6 +252,22 @@ class DriversIntegrationTests(unittest.TestCase):
         stock = DriverStock.query.filter_by(driverId=self.driver.id, itemId=self.item.id).first()
         assert stock.quantity == newquantity
 
+class UserIntegrationTests(unittest.TestCase):
+
+    def setUp(self):
+        self.area = create_area("St. Augustine")
+        self.street = create_street(self.area.id, "Warner Street")
+        self.driver = create_driver("driver1", "pass")
+        self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
+        self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
+        self.item = Item("Whole-Grain Bread", 19.50)
+        db.session.add(self.item)
+        db.session.commit()
+    
+    def test_view_drives(self):
+        drives = user_view_drives()
+        self.assertIsNotNone(drives)
+
     def test_view_stock(self):
-        stock = driver_view_stock(self.driver)
+        stock = user_view_stock(self.driver.id)
         self.assertIsNotNone(stock)

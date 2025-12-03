@@ -25,7 +25,7 @@ def driver_logout(driver):
     db.session.commit()
     return driver
 
-def driver_schedule_drive(driver, schedule_id, area_id, street_id, date_str, time_str):
+def driver_schedule_drive(driver, area_id, street_id, date_str, time_str):
     """
     Schedules a new drive and notifies subscribers via the Schedule mechanism.
     """
@@ -70,8 +70,9 @@ def driver_schedule_drive(driver, schedule_id, area_id, street_id, date_str, tim
             message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
         schedule_notify_subscribers(message)
         db.session.commit()
-        return (new_drive)
-    return None
+
+    return (new_drive)
+    
 
 def driver_cancel_drive(driver, drive_id):
     """
