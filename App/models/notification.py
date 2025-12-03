@@ -8,7 +8,7 @@ class Notification(db.Model):
     residentId = db.Column(db.Integer, db.ForeignKey('resident.id'))
     message = db.Column(db.String(255), nullable=False)
 
-    def __init__(self, message):
+    def __init__(self,message):
         self.message = message
 
     def __repr__(self):
