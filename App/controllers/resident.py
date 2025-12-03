@@ -5,7 +5,7 @@ from App.database import db
 def resident_request_stop(resident, drive_id):
     drives = Drive.query.filter_by(areaId=resident.areaId, streetId=resident.streetId, status="Upcoming").all()
     existing_stop = Stop.query.filter_by(driveId=drive_id, residentId=resident.id).first()
-    if not any(d.id == drive_id for d in drives) or not existing_stop:
+    if not any(d.id == drive_id for d in drives) or existing_stop:
         return None
 
     new_stop = Stop(driveId=drive_id, residentId=resident.id)
