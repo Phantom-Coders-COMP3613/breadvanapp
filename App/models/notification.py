@@ -12,6 +12,6 @@ class Notification(db.Model):
         self.message = message
 
     def __repr__(self):
-        return f'<Resident received notification!\n {self.message}>'
+        return f'Resident {self.residentId} received notification!\n {self.message}'
     
     

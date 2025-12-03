@@ -4,7 +4,7 @@ from App.views.auth import auth_views
 from App.views import user as user_views
 from App.controllers import *
 
-driver_views = Blueprint('driver_views', __name__, url_prefix='/api/driver')
+driver_views = Blueprint('driver_views', __name__)
 
 
 @driver_views.route('/me', methods=['GET'])
@@ -22,12 +22,12 @@ def create_drive():
 
     driver = current_user
 
-    try:
-        drive = driver_schedule_drive(driver, data['area_id'],data['street_id'], data['date'], data['time'])
-    except ValueError as e:
-        
-    out = drive.get_json() if hasattr(drive, 'get_json') else drive
-    return jsonify(out), 201
+    drive = driver_schedule_drive(driver, data['area_id'],data['street_id'], data['date'], data['time'])
+
+    if not drive:
+        return jsonify({'message': f'Error creating drive'}), 400
+    return jsonify({'status': 'success', 'message': f'Drive created successfully with ID: {drive.id}'}), 200
+
 
 @driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
 @jwt_required()
@@ -54,22 +54,25 @@ def start_drive(drive_id):
 @jwt_required()
 @login_required(Driver)
 def end_drive(drive_id):
-    results = driver_controller.driver_end_drive(current_user)
+    results = driver_end_drive(current_user)
     return jsonify({'id': getattr(results, 'id', drive_id), 'status': 'ended'}), 200
 
 
-@driver_views.route('/drives/<int:drive_id>/cancel', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:drive_id>/cancel', methods=['POST'])
 @jwt_required()
 @login_required(Driver)
 def cancel_drive(drive_id):
-    driver_controller.driver_cancel_drive(current_user, drive_id)
-    return jsonify({'id': drive_id, 'status': 'cancelled'}), 200
+    drive = driver_cancel_drive(current_user, drive_id)
+    if not drive:
+        return jsonify({'message': f'Error cancelling drive'}), 400
+    return jsonify({'status': 'success', 'message': f'Drive cancelled successfully with ID: {drive.id}'}), 200
 
 
-@driver_views.route('/api/drives/<int:drive_id>/requested-stops', methods=['GET'])
+
+@driver_views.route('/api/driver/drives/<int:drive_id>/requested-stops', methods=['GET'])
 @jwt_required()
 @login_required(Driver)
 def requested_stops(drive_id):
-    stops = driver_controller.driver_view_requested_stops(current_user, drive_id)
+    stops = driver_view_requested_stops(current_user, drive_id)
     items = [s.get_json() if hasattr(s, 'get_json') else s for s in (stops or [])]
-    return jsonify({'items': items}), 200
+    return jsonify({'Stops': items}), 200
