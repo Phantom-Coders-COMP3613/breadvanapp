@@ -14,18 +14,13 @@ def get_driver_or_403(user_id):
     return driver
 
 
-@driver_stock_views.route('/stock', methods=['GET'])
-@jwt_required()
-
-def view_driver_stock_endpoint():
+@driver_stock_views.route('/api/stocks', methods=['GET'])
+def view_driver_stock_endpoint(driver_id):
     """
     GET /api/driver/stock
     Endpoint to view the current stock carried by the authenticated driver.
     """
-    driver = get_driver_or_403(current_user.id)
-
-    if not driver:
-        return jsonify({"error": "Unauthorized or user is not a driver"}), 403
+    driver = Driver.query.get(driver_id)
 
     try:
         stocks = driver_controller.driver_view_stock(driver)

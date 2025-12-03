@@ -68,9 +68,8 @@ def driver_schedule_drive(driver, area_id, street_id, date_str, time_str):
         for stock in driverStock:
             item = stock.item
             message += f"- {item.get_json()} (Quantity: {stock.quantity})\n"
-        schedule_notify_subscribers(message)
-        db.session.commit()
 
+    schedule_notify_subscribers(message)
     return (new_drive)
     
 
@@ -81,8 +80,8 @@ def driver_cancel_drive(driver, drive_id):
     """
     drive = Drive.query.get(drive_id)
 
-    if not drive or drive.driverId != driver.id:
-        raise ValueError("Drive not found or does not belong to this driver.")
+    if not drive or drive.driverId != driver.id or drive.status == "Cancelled":
+        raise ValueError("Drive not found, already cancelled, or does not belong to this driver.")
 
     drive.status = "Cancelled"
 
@@ -94,7 +93,7 @@ def driver_cancel_drive(driver, drive_id):
             message = f"CANCELLED>> Drive {drive.id} by Driver {driver.id} on {drive.date} at {drive.time}"
             schedule_notify_subscribers(message)
             db.session.commit()
-        return None
+        return drive
 
 def driver_view_drives(driver):
     """
