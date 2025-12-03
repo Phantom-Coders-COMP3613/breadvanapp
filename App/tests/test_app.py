@@ -148,7 +148,6 @@ class ResidentsIntegrationTests(unittest.TestCase):
         self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
         self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
 
-
     def test_request_stop(self):
         print(self.resident.id)
         print(self.drive.id)
@@ -252,3 +251,23 @@ class DriversIntegrationTests(unittest.TestCase):
         driver_update_stock(self.driver, self.item.id, newquantity)
         stock = DriverStock.query.filter_by(driverId=self.driver.id, itemId=self.item.id).first()
         assert stock.quantity == newquantity
+
+class UserIntegrationTests(unittest.TestCase):
+
+    def setUp(self):
+        self.area = create_area("St. Augustine")
+        self.street = create_street(self.area.id, "Warner Street")
+        self.driver = create_driver("driver1", "pass")
+        self.resident = create_resident("john", "johnpass", self.area.id, self.street.id, 123)
+        self.drive = driver_schedule_drive(self.driver,self.area.id, self.street.id, "2025-12-25", "11:30")
+        self.item = Item("Whole-Grain Bread", 19.50)
+        db.session.add(self.item)
+        db.session.commit()
+    
+    def test_view_drives(self):
+        drives = user_view_drives()
+        self.assertIsNotNone(drives)
+
+    def test_view_stock(self):
+        stock = user_view_stock(self.driver.id)
+        self.assertIsNotNone(stock)
