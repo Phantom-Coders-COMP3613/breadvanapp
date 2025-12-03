@@ -5,6 +5,7 @@ from App.controllers import driver as driver_controller
 from App.controllers import user as user_controller
 from App.views import user as user_views
 from App.controllers import *
+from App.api.security import role_required
 
 driver_views = Blueprint('driver_views', __name__, url_prefix='/api/driver')
 
