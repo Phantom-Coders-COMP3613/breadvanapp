@@ -26,11 +26,12 @@ class Driver(User):
         self.streetId = streetId
 
     def get_json(self):
-        user_json = super().get_json()
-        user_json['status'] = self.status
-        user_json['areaId'] = self.areaId
-        user_json['streetId'] = self.streetId
-        return user_json
+        return {
+            'driverId': self.id,
+            'status': self.status,
+            'areaId': self.areaId if self.areaId is not None else "None",
+            'streetId': self.streetId if self.streetId is not None else "None"
+        }
 
     def login(self, password):
         if super().login(password):

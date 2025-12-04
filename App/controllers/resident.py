@@ -43,5 +43,4 @@ def resident_receive_notification(resident, message):
     resident.notifications.append(notification)
     db.session.add_all([resident, notification])
     db.session.commit()
-    print(f'{resident.notifications[-1]}')
     return resident.notifications[-1]

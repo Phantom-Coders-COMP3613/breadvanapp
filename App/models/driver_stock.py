@@ -16,7 +16,7 @@ class DriverStock(db.Model):
 
   def get_json(self):
      return {
-         'id': self.id,
+         'stockId': self.id,
          'driverId': self.driverId,
          'itemId': self.itemId,
          'quantity': self.quantity

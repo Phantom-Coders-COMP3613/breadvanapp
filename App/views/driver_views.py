@@ -25,54 +25,67 @@ def create_drive():
     drive = driver_schedule_drive(driver, data['area_id'],data['street_id'], data['date'], data['time'])
 
     if not drive:
-        return jsonify({'message': f'Error creating drive'}), 400
-    return jsonify({'status': 'success', 'message': f'Drive created successfully with ID: {drive.id}'}), 200
+        return jsonify({'message': f'Error scheduling drive'}), 400
+    return jsonify({'status': 'success', 'message': f'Drive scheduled successfully with ID: {drive.id}'}), 200
 
 
-@driver_views.route('/api/driver/drives/<int:drive_id>/start', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:driveId>/start', methods=['POST'])
 @jwt_required()
 @login_required(Driver)
-def start_drive(drive_id):
-        try:
-            driver= driver_controller.driver_start_drive(current_user, drive_id)
-            if not driver:
-                return jsonify({
-                    "error": {
-                    "code": "not_found",
-                    "message": "Drive does not exist"
-                    }
-        }), 404
-    
-            return jsonify({'id': drive_id, 'status': 'started'}), 200
-        except ValueError as e:  # Catch controller errors
-            return jsonify({'error': {'code': 'not_found', 'message': str(e)}}), 404
-        except Exception as e:
-            return jsonify({'error': {'code': 'internal_error', 'message': str(e)}}), 500
+def start_drive(driveId):
+    drive= driver_start_drive(current_user, driveId)
+    if not drive:
+        return jsonify({'message': f'Error starting drive'}), 400
+    return jsonify({'status': 'success', 'message': f'Drive started successfully with ID: {driveId}'}), 200
 
 
-@driver_views.route('/drives/<int:drive_id>/end', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:driveId>/end', methods=['POST'])
 @jwt_required()
 @login_required(Driver)
-def end_drive(drive_id):
-    results = driver_end_drive(current_user)
-    return jsonify({'id': getattr(results, 'id', drive_id), 'status': 'ended'}), 200
+def end_drive(driveId):
+    drive = driver_end_drive(current_user)
+    if not drive:
+        return jsonify({'message': f'Error ending drive'}), 400
+    return jsonify({'status': 'success', 'message': f'Drive ended successfully with ID: {driveId}'}), 200
 
 
-@driver_views.route('/api/driver/drives/<int:drive_id>/cancel', methods=['POST'])
+@driver_views.route('/api/driver/drives/<int:driveId>/cancel', methods=['POST'])
 @jwt_required()
 @login_required(Driver)
-def cancel_drive(drive_id):
-    drive = driver_cancel_drive(current_user, drive_id)
+def cancel_drive(driveId):
+    drive = driver_cancel_drive(current_user, driveId)
     if not drive:
         return jsonify({'message': f'Error cancelling drive'}), 400
     return jsonify({'status': 'success', 'message': f'Drive cancelled successfully with ID: {drive.id}'}), 200
 
 
 
-@driver_views.route('/api/driver/drives/<int:drive_id>/requested-stops', methods=['GET'])
+@driver_views.route('/api/driver/drives/<int:driveId>/requested-stops', methods=['GET'])
 @jwt_required()
 @login_required(Driver)
-def requested_stops(drive_id):
-    stops = driver_view_requested_stops(current_user, drive_id)
+def requested_stops(driveId):
+    stops = driver_view_requested_stops(current_user, driveId)
     items = [s.get_json() if hasattr(s, 'get_json') else s for s in (stops or [])]
-    return jsonify({'Stops': items}), 200
+    return jsonify({'stops': items}), 200
+
+@driver_views.route('/api/driver/update-stock', methods=['PUT'])
+@jwt_required()
+@login_required(Driver)
+def update_driver_stock():
+    data = request.json
+    
+    try:
+        updated_stock = driver_update_stock(current_user, data['item_id'], data['quantity'])
+        
+        stock_data = {
+            'id': updated_stock.id,
+            'itemId': updated_stock.itemId,
+            'itemName': updated_stock.item.name if updated_stock.item else 'Unknown Item',
+            'quantity': updated_stock.quantity
+        }
+        return jsonify(stock_data), 200
+    except ValueError as e:
+
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Failed to update stock: {str(e)}"}), 500
