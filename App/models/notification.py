@@ -6,7 +6,7 @@ class Notification(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     residentId = db.Column(db.Integer, db.ForeignKey('resident.id'))
-    message = db.Column(db.String(255), nullable=False)
+    message = db.Column(db.String(500), nullable=False)
 
     def __init__(self,message):
         self.message = message
