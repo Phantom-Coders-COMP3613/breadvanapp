@@ -1,0 +1,3018 @@
+{
+	"info": {
+		"_postman_id": "0ec412d9-b8f9-4e4b-9edd-b41a56133e66",
+		"name": "Bread Van App API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49379645",
+		"_collection_link": "https://www.postman.com/charak-ali-2639203/workspace/phantom-coders-project/collection/49379645-0ec412d9-b8f9-4e4b-9edd-b41a56133e66?action=share&source=collection_link&creator=49379645"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "View Drives",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has 'Drives' array\", function () {\r",
+									"    if (pm.response.code !== 400){\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData).to.have.property(\"drives\");\r",
+									"        pm.expect(jsonData.drives).to.be.an('array');\r",
+									"    } else {\r",
+									"        pm.expect(pm.response.code).to.equal(400);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each item in 'items' is a drive object\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    if (Array.isArray(jsonData.items)) {\r",
+									"        jsonData.items.forEach(function (item) {\r",
+									"            pm.expect(item).to.have.property(\"driverId\");\r",
+									"            pm.expect(item).to.have.property(\"areaId\");\r",
+									"            pm.expect(item).to.have.property(\"streetId\");\r",
+									"            pm.expect(item).to.have.property(\"date\");\r",
+									"            pm.expect(item).to.have.property(\"time\");\r",
+									"            pm.expect(item).to.have.property(\"status\");\r",
+									"        });\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/drives",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"drives"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "View Drives",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/api/drives",
+									"path": [
+										"api",
+										"drives"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:44:19 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "154"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e241bd8cfdb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "e59588d3-d041-463d"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"drives\": [\n        {\n            \"areaId\": 1,\n            \"date\": \"2026-01-14\",\n            \"driverId\": 3,\n            \"id\": 1,\n            \"status\": \"Upcoming\",\n            \"streetId\": 1,\n            \"time\": \"10:00:00\"\n        },\n        {\n            \"areaId\": 2,\n            \"date\": \"2026-01-06\",\n            \"driverId\": 4,\n            \"id\": 2,\n            \"status\": \"Upcoming\",\n            \"streetId\": 2,\n            \"time\": \"09:00:00\"\n        }\n    ],\n    \"total\": 2\n}"
+						}
+					]
+				},
+				{
+					"name": "View Driver Stock",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has 'Stock' array\", function () {\r",
+									"    if (pm.response.code !== 400){\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData).to.have.property(\"stocks\");\r",
+									"        pm.expect(jsonData.stocks).to.be.an('array');\r",
+									"    } else {\r",
+									"        pm.expect(pm.response.code).to.equal(400);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each item in 'items' is a stock object\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    if (Array.isArray(jsonData.items)) {\r",
+									"        jsonData.items.forEach(function (item) {\r",
+									"            pm.expect(item).to.have.property(\"stockId\");\r",
+									"            pm.expect(item).to.have.property(\"driverId\");\r",
+									"            pm.expect(item).to.have.property(\"itemId\");\r",
+									"            pm.expect(item).to.have.property(\"quantity\");\r",
+									"        });\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/stocks/:driverId",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								":driverId"
+							],
+							"variable": [
+								{
+									"key": "driverId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "View Driver Stock",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "/api/stocks/:driverId",
+									"path": [
+										"api",
+										"stocks",
+										":driverId"
+									],
+									"variable": [
+										{
+											"key": "driverId",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:44:32 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "109"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e24707c58db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "7d8c09e7-7fa4-4409"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stocks\": [\n        {\n            \"driverId\": 3,\n            \"itemId\": 1,\n            \"quantity\": 15,\n            \"stockId\": 1\n        },\n        {\n            \"driverId\": 3,\n            \"itemId\": 3,\n            \"quantity\": 20,\n            \"stockId\": 3\n        }\n    ],\n    \"total\": 2\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Resident",
+			"item": [
+				{
+					"name": "Create Resident",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {\r",
+									"\tpm.response.to.not.be.error;\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Resident created test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"Resident created successfully with ID:\")\r",
+									"\t).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"ResidentAPI\",\r\n  \"password\": \"ResidentAPIpass\",\r\n  \"area_id\": 1,\r\n  \"street_id\": 1,\r\n  \"house_number\": 125\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/resident",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Resident",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"ResidentAPI\",\r\n  \"password\": \"ResidentAPIpass\",\r\n  \"area_id\": 1,\r\n  \"street_id\": 1,\r\n  \"house_number\": 125\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/api/resident",
+									"path": [
+										"api",
+										"resident"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:44:54 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e24f06b2bdb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "816e0569-de84-4adf"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Resident created successfully with ID: 5\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Resident Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.eql(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response has required fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData).to.have.property('access_token').that.is.a('string');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Access token is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.access_token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Access token should not be empty\");",
+									"});",
+									"",
+									"pm.test(\"Content-Type header is set to application/json\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Resident1\",\r\n    \"password\": \"Resident1pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Resident Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"Resident1\",\r\n    \"password\": \"Resident1pass\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/api/login",
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:03 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "245"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e252dbda8db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "e44a602a-fd81-4a09"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDg4MTEwMywianRpIjoiNDY0M2YzMWQtNjlkNy00NzMxLWEzNzYtOTNmNWZkNjRjZTgyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NjQ4ODExMDMsImV4cCI6MTc2NDg4MjAwM30.GAHdzPheiIrvq2VwvKW4_40KGLML1_lUw-gCWksU-Go; Secure; HttpOnly; Path=/"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDg4MTEwMywianRpIjoiNDY0M2YzMWQtNjlkNy00NzMxLWEzNzYtOTNmNWZkNjRjZTgyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NjQ4ODExMDMsImV4cCI6MTc2NDg4MjAwM30.GAHdzPheiIrvq2VwvKW4_40KGLML1_lUw-gCWksU-Go\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Request Stop",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {\r",
+									"\tpm.response.to.not.be.error;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Stop Creation Failure Test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"Error creating stop\")\r",
+									"\t).to.be.false;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Stop Creation Success Test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"Stop created successfully with ID\")\r",
+									"\t).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"drive_id\": 1\r\n}\r\n\r\n  \r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/resident/stops",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident",
+								"stops"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Request Stop",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"drive_id\": 1\r\n}\r\n\r\n  \r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "/api/resident/stops",
+									"path": [
+										"api",
+										"resident",
+										"stops"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:10 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "73"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e255dbfaadb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "b9b34d47-531d-4288"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Stop created successfully with ID: 2\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Cancel Stop",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"\tpm.response.to.not.be.error;",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Stop Creation Failure Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Error deleting stop\")",
+									"\t).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Stop Creation Success Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Stop deleted successfully\")",
+									"\t).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/resident/stops/:driveId",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident",
+								"stops",
+								":driveId"
+							],
+							"variable": [
+								{
+									"key": "driveId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Cancel Stop",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "/api/resident/stops/:driveId",
+									"path": [
+										"api",
+										"resident",
+										"stops",
+										":driveId"
+									],
+									"variable": [
+										{
+											"key": "driveId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:17 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e25866eeadb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "40441640-0c8f-4630"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Stop deleted successfully\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "View Inbox",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has 'Notifications' array\", function () {\r",
+									"    if (pm.response.code !== 400){\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData).to.have.property(\"notifications\");\r",
+									"        pm.expect(jsonData.notifications).to.be.an('array');\r",
+									"    } else {\r",
+									"        pm.expect(pm.response.code).to.equal(400);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Each item in 'items' is a notification object\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    if (Array.isArray(jsonData.items)) {\r",
+									"        jsonData.items.forEach(function (item) {\r",
+									"            pm.expect(item).to.have.property(\"message\");\r",
+									"        });\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/resident/inbox",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident",
+								"inbox"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "View Inbox",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "/api/resident/inbox",
+									"path": [
+										"api",
+										"resident",
+										"inbox"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:28 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "246"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e25cb4855db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "9e0e9908-29e9-4713"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"notifications\": [\n        {\n            \"message\": \"SCHEDULED>> Drive 1 by Driver 3 on 2026-01-14 at 10:00:00\\nItems in Stock:\\n- {'id': 1, 'name': 'Cake', 'price': 5.0} (Quantity: 15)\\n- {'id': 3, 'name': 'Hops Bread', 'price': 20.0} (Quantity: 20)\\n\",\n            \"notificationId\": 1,\n            \"residentId\": 1\n        },\n        {\n            \"message\": \"SCHEDULED>> Drive 2 by Driver 4 on 2026-01-06 at 09:00:00\\nItems in Stock:\\n- {'id': 2, 'name': 'Raisin Bread', 'price': 12.0} (Quantity: 10)\\n\",\n            \"notificationId\": 2,\n            \"residentId\": 1\n        }\n    ],\n    \"total\": 2\n}"
+						}
+					]
+				},
+				{
+					"name": "View Driver Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));\r",
+									"pm.test(\"Has stats\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.expect(json).to.have.property('stats');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/resident/driver-status/:driverId",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident",
+								"driver-status",
+								":driverId"
+							],
+							"variable": [
+								{
+									"key": "driverId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "View Driver Status",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "/api/resident/driver-status/:driverId",
+									"path": [
+										"api",
+										"resident",
+										"driver-status",
+										":driverId"
+									],
+									"variable": [
+										{
+											"key": "driverId",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:36 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "92"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e25fd5f63db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "f1c09591-7e01-4ae0"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stats\": [\n        {\n            \"areaId\": \"None\",\n            \"driverId\": 3,\n            \"status\": \"Offline\",\n            \"streetId\": \"None\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Unwatch Schedule",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {\r",
+									"\tpm.response.to.not.be.error;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Unwatch Schedule Failure Test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"Error unwatching schedule\")\r",
+									"\t).to.be.false;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Unwatch Schedule Success Test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"successfully unsubscribed!\")\r",
+									"\t).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/resident/unwatch-schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident",
+								"unwatch-schedule"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Unwatch Schedule",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "/api/resident/unwatch-schedule",
+									"path": [
+										"api",
+										"resident",
+										"unwatch-schedule"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:51 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "74"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e26596dc8db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "fc4d9634-a9d2-40ff"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Resident ID: 1 successfully unsubscribed!\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Watch Schedule",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {\r",
+									"\tpm.response.to.not.be.error;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Watch Schedule Failure Test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"Error watching schedule\")\r",
+									"\t).to.be.false;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Watch Schedule Success Test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"successfully subscribed!\")\r",
+									"\t).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/resident/watch-schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"resident",
+								"watch-schedule"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Watch Schedule",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "/api/resident/watch-schedule",
+									"path": [
+										"api",
+										"resident",
+										"watch-schedule"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:45:59 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "72"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e268cdf1edb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "f31da9ff-438c-4703"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Resident ID: 1 successfully subscribed!\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Driver",
+			"item": [
+				{
+					"name": "Create Driver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {\r",
+									"\tpm.response.to.not.be.error;\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Driver created test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"Driver created successfully with ID:\")\r",
+									"\t).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"DriverAPI\",\r\n  \"password\": \"DriverAPIpass\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/driver",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Driver",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"DriverAPI\",\r\n  \"password\": \"DriverAPIpass\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/driver",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:46:09 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "57"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e26c73cb3db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "ac9a1375-a04e-45e9"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Driver created successfully with ID: 6\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Driver Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response contains the required field 'access_token'\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData).to.have.property('access_token');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Access token must be a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.access_token).to.exist.and.to.be.a('string').and.to.have.lengthOf.above(0, \"Access token should not be empty\");",
+									"});",
+									"",
+									"pm.test(\"Content-Type is application/json\", function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Driver1\",\r\n  \"password\": \"Driver1pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Driver Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Driver1\",\r\n  \"password\": \"Driver1pass\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/login",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:46:14 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "244"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e26e46cd4db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "90f8ec58-8656-48c4"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDg4MTE3MywianRpIjoiOTJiY2ZjYjgtYTE4Mi00M2Q2LWI0ZjMtZjZhNjY4MWY5NDc3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NjQ4ODExNzMsImV4cCI6MTc2NDg4MjA3M30.HfvPwXonIqmMzq1G2fE0-_0ZsfDDH-qWaFDjaGUi7Y0; Secure; HttpOnly; Path=/"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDg4MTE3MywianRpIjoiOTJiY2ZjYjgtYTE4Mi00M2Q2LWI0ZjMtZjZhNjY4MWY5NDc3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NjQ4ODExNzMsImV4cCI6MTc2NDg4MjA3M30.HfvPwXonIqmMzq1G2fE0-_0ZsfDDH-qWaFDjaGUi7Y0\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Schedule Drive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"\tpm.response.to.not.be.error;",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Drive scheduled Failure Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Error scheduling drive\")",
+									"\t).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Drive scheduled Success Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Drive scheduled successfully with ID\")",
+									"\t).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "JWT {{staff_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"area_id\": 2,\r\n    \"street_id\": 2,\r\n    \"date\": \"2026-01-10\",\r\n    \"time\": \"10:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/driver/drives",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"drives"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Schedule Drive",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"area_id\": 2,\r\n    \"street_id\": 2,\r\n    \"date\": \"2026-01-10\",\r\n    \"time\": \"10:00\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/driver/drives",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver",
+										"drives"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:46:18 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "70"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e27072926db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "3f3c4d10-7227-4b93"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Drive scheduled successfully with ID: 3\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Start Drive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"\tpm.response.to.not.be.error;",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Drive Start Failure Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Error starting drive\")",
+									"\t).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Drive Start Success Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Drive started successfully with ID\")",
+									"\t).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "JWT {{staff_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/driver/drives/:driveId/start",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"drives",
+								":driveId",
+								"start"
+							],
+							"variable": [
+								{
+									"key": "driveId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Start Drive",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/api/driver/drives/:driveId/start",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver",
+										"drives",
+										":driveId",
+										"start"
+									],
+									"variable": [
+										{
+											"key": "driveId",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:46:42 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "71"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e2799cf3ddb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "a4f5412b-6ad0-4f8e"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Drive started successfully with ID: 3\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "End Drive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"\tpm.response.to.not.be.error;",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Drive End Failure Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Error ending drive\")",
+									"\t).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Drive End Success Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Drive ended successfully with ID\")",
+									"\t).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "JWT {{staff_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"drive_id\": 1,\r\n    \"status\" : \"ended\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/driver/drives/:driveId/end",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"drives",
+								":driveId",
+								"end"
+							],
+							"variable": [
+								{
+									"key": "driveId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "End Drive",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"drive_id\": 1,\r\n    \"status\" : \"ended\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/driver/drives/:driveId/end",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver",
+										"drives",
+										":driveId",
+										"end"
+									],
+									"variable": [
+										{
+											"key": "driveId",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:46:50 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "69"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e27cc8df3db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "a27a1cd8-fc50-421e"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Drive ended successfully with ID: 3\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Cancel Drive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"\tpm.response.to.not.be.error;",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Drive Cancel Failure Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Error cancelling drive\")",
+									"\t).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Drive Cancel Success Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Drive cancelled successfully with ID\")",
+									"\t).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "JWT {{staff_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/driver/drives/:driveId/cancel",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"drives",
+								":driveId",
+								"cancel"
+							],
+							"variable": [
+								{
+									"key": "driveId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Cancel Drive",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{host}}/api/driver/drives/:driveId/cancel",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver",
+										"drives",
+										":driveId",
+										"cancel"
+									],
+									"variable": [
+										{
+											"key": "driveId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:46:58 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "72"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e27ff3a99db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "4ccd259c-7f31-49d6"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Drive cancelled successfully with ID: 1\",\n    \"status\": \"success\"\n}"
+						}
+					]
+				},
+				{
+					"name": "View Requested Stops",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has 'Stops' array\", function () {",
+									"    if (pm.response.code !== 400){",
+									"        var jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property(\"stops\");",
+									"        pm.expect(jsonData.stops).to.be.an('array');",
+									"    } else {",
+									"        pm.expect(pm.response.code).to.equal(400);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Each item in 'items' is a stop object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (Array.isArray(jsonData.items)) {",
+									"        jsonData.items.forEach(function (item) {",
+									"            pm.expect(item).to.have.property(\"stopId\");",
+									"            pm.expect(item).to.have.property(\"driveId\");",
+									"            pm.expect(item).to.have.property(\"residentId\");",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "JWT {{staff_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/driver/drives/:driveId/requested-stops",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"drives",
+								":driveId",
+								"requested-stops"
+							],
+							"variable": [
+								{
+									"key": "driveId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "View Requested Stops",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/driver/drives/:driveId/requested-stops",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver",
+										"drives",
+										":driveId",
+										"requested-stops"
+									],
+									"variable": [
+										{
+											"key": "driveId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/3.1.3 Python/3.13.9"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:58:05 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "94"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stops\": [\n        {\n            \"driveId\": 1,\n            \"residentId\": 1,\n            \"stopId\": 2\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Stock",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"\tpm.response.to.not.be.error;",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Update Stock Failure Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Error creating or updating stock\")",
+									"\t).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"Update Stock Success Test\", function () {",
+									"",
+									"\tlet jsonData = pm.response.json();",
+									"\tpm.expect(",
+									"\t\tjsonData['message'].includes(\"Stock created or updated successfully with ID\")",
+									"\t).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "JWT {{staff_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"item_id\": 2,\r\n    \"quantity\": 15\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/driver/update-stock",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"update-stock"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update Stock",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"item_id\": 2,\r\n    \"quantity\": 15\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/driver/update-stock",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"driver",
+										"update-stock"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Werkzeug/3.1.3 Python/3.13.9"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 21:54:38 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "57"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								}
+							],
+							"cookie": [
+								{
+									"expires": "Invalid Date",
+									"domain": "",
+									"path": ""
+								}
+							],
+							"body": "{\n    \"success\": \"Stock created or updated successfully with ID: 4\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Identify",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {\r",
+									"\tpm.response.to.be.ok;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Identify test\", function () {\r",
+									"\r",
+									"\tlet jsonData = pm.response.json();\r",
+									"\tpm.expect(\r",
+									"\t\tjsonData['message'].includes(\"username\")\r",
+									"\t).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/identify",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"identify"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Identify",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/identify",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"identify"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:47:53 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "48"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e295449b8db2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "942426c4-d572-46f1"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"username: Driver1, id : 3\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response indicates successful logout\", function () {\r",
+									"    let responseJson;\r",
+									"    try {\r",
+									"        responseJson = pm.response.json();\r",
+									"    } catch (e) {\r",
+									"        pm.expect.fail(\"Response is not valid JSON: \" + e.message);\r",
+									"        return;\r",
+									"    }\r",
+									"    pm.expect(responseJson['message'].includes(\"Logged Out!\")).to.be.true;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/logout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Logout",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/logout",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 04 Dec 2025 20:48:05 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "35"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "CF-RAY",
+									"value": "9a8e29a26d4bdb2d-MIA"
+								},
+								{
+									"key": "access-control-allow-origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "rndr-id",
+									"value": "2cc6a5fc-472e-48be"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "access_token=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; HttpOnly; Path=/"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "refresh_token_cookie=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; HttpOnly; Path=/"
+								},
+								{
+									"key": "vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "x-render-origin-server",
+									"value": "gunicorn"
+								},
+								{
+									"key": "cf-cache-status",
+									"value": "DYNAMIC"
+								},
+								{
+									"key": "Server",
+									"value": "cloudflare"
+								},
+								{
+									"key": "alt-svc",
+									"value": "h3=\":443\"; ma=86400"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Logged Out!\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": ""
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "hosts",
+			"value": ""
+		},
+		{
+			"key": "staff_token",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
