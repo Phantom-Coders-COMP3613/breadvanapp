@@ -1,11 +1,15 @@
-# 🍞 Bread Van App CLI
-This project provides a command-line interface (CLI) for managing and interacting with the Bread Van App.
- It is built with Flask CLI and click, and supports multiple roles: Admin, Driver, and Resident.
+# 🍞 Bread Van App 
+The App is a backendservice for managing the operations of the Bread Van system.  
+It provides endpoints for Drivers and Residents to interact with the system, handling everything from scheduling drives to requesting stops.
 
-## 🚀 Setup
-### Install dependencies:
+---
+
+## 🚀 Quick Start / Setup Instructions
+
 ```bash
-$ pip install -r requirements.txt
+git clone https://github.com/Phantom-Coders-COMP3613/breadvanapp.git
+cd breadvanapp
+pip install -r requirements.txt
 ```
 
 ### Initialize the database:
@@ -13,26 +17,88 @@ $ pip install -r requirements.txt
 flask init
 ```
 This creates and initializes all accounts and tables.
-* Admin
-  * admin / adminpass
-* Drivers
+
+Default Accounts:
+* **Drivers**
   * bob / bobpass
   * mary / marypass
-* Residents
+* **Residents**
   * alice / alicepass
   * jane / janepass
   * john / johnpass
 
-### Run any CLI command using:
+---
+
+## 📦 What Is It?
+
+The **Bread Van App** is a command-line interface (CLI) and backend service for scheduling and managing Bread Van drives.  
+It supports multiple user roles that interact with the system differently:
+
+- **Driver** — creates and executes drives and handles stop requests  
+- **Resident** — requests stops and receives notifications  
+- **General Users** — any authenticated user who can browse public information  
+
+It organizes data and workflows into:  
+**Area → Street → Drive → Stops → Residents**
+
+---
+
+## 🔐 User Roles & Capabilities
+
+### 🚐 **Driver**
+Drivers operate the actual bread van routes.  
+They manage the schedule of drives and respond to resident stop requests.
+
+Drivers can:
+- **Schedule drives** — pick date/time for upcoming routes  
+- **Cancel drives** — remove a future drive  
+- **View all their drives** — past and upcoming routes  
+- **Start and end drives** — mark route active or complete  
+- **View requested stops** — see residents awaiting service  
+
+Drivers serve as the operational backbone of the service.
+
+---
+
+### 🏠 **Resident**
+Residents are the customers who request service from the Bread Van.
+
+Residents can:
+- **Create an account** — signup does *not* require approval  
+- **Request a stop** — select area, street, house number  
+- **Cancel a stop** — withdraw request if needed  
+- **View inbox messages** — confirmations, updates  
+- **View driver statistics** — performance and reliability info  
+
+Residents represent the demand side of the operation.
+
+---
+
+### 👥 **General / User**
+General controllers apply to any logged-in user, regardless of their role.
+
+Capabilities include:
+- Logging in and out  
+- Viewing drives on specific streets  
+- Browsing areas and streets  
+
+---
+
+## ✨ Features / Controllers Overview
+
+Run any CLI controller using:
+
 ```bash
-flask <group> <command> [args...]
+flask <group> <controller> [args...]
 ```
 
+---
 
-## 👤 User Commands | Group: flask user
+## 👤 User Controllers | Group: `flask user`
+
 ### Login
 ```bash
- flask user login <username> <password>
+flask user login <username> <password>
 ```
 
 ### Logout
@@ -44,67 +110,18 @@ flask user logout
 ```bash
 flask user view_street_drives
 ```
-Prompts to select an area and street, then lists scheduled drives.
+Prompts to select an area and street, then lists all scheduled drives.
 
+---
 
+## 🚐 Driver Controllers | Group: `flask driver`
 
-## 🛠️ Admin Commands | Group: flask admin
-Admins manage drivers, areas, and streets.
-### List Users
-```bash
-flask admin list
-```
-
-### Create Driver
-```bash
-flask admin create_driver <username> <password>
-```
-
-### Delete Driver
-```bash
-flask admin delete_driver <driver_id>
-```
-
-### Add Area
-```bash
-flask admin add_area <name>
-```
-
-### Add Street
-```bash
-flask admin add_street <area_id> <name>
-```
-
-### Delete Area
-```bash
-flask admin delete_area <area_id>
-```
-
-### Delete Street
-```bash
-flask admin delete_street <street_id>
-```
-
-### View All Areas
-```bash
-flask admin view_all_areas
-```
-
-### View All Streets
-```bash
-flask admin view_all_streets
-```
-
-
-## 🚐 Driver Commands | Group: flask driver
-Drivers manage drives and stops.
 ### Schedule Drive
 ```bash
 flask driver schedule_drive YYYY-MM-DD HH:MM
 ```
-Prompts to select area & street.
-Drives cannot be scheduled in the past nor more than 1 year ahead of the current date.
-
+Prompts to select area & street.  
+Cannot schedule drives in the past or more than 1 year ahead.
 
 ### Cancel Drive
 ```bash
@@ -131,15 +148,16 @@ flask driver end_drive
 flask driver view_requested_stops <drive_id>
 ```
 
+---
 
-## 🏠 Resident Commands | Group: flask resident
-Residents can request stops and view their inbox.
+## 🏠 Resident Controllers | Group: `flask resident`
+
 ### Create Resident
 ```bash
 flask resident create <username> <password>
 ```
-Prompts for area, street, and house number. 
-A logged-in account is not required to create a resident.
+Prompts for area, street, and house number.  
+Logged-in account **not** required.
 
 ### Request Stop
 ```bash
@@ -161,11 +179,8 @@ flask resident view_inbox
 flask resident view_driver_stats <driver_id>
 ```
 
+---
 
 ## 🔑 Role Requirements
-* flask admin ... → must be logged in as Admin
-* flask driver ... → must be logged in as Driver
-* flask resident ... → must be logged in as Resident
-
-
-General user commands (login/logout/view_street_drives) are available to all.
+- `flask driver ...` → must be logged in as **Driver**  
+- `flask resident ...` → must be logged in as **Resident**
