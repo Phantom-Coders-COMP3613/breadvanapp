@@ -41,7 +41,7 @@ class DriverUnitTests(unittest.TestCase):
     def test_driver_getJSON(self):
         driver = Driver("steve", "stevepass", "Busy", 2, 12)
         driver_json = driver.get_json()
-        self.assertDictEqual(driver_json, {"id":None, "username":"steve", "status":"Busy", "areaId":2, "streetId":12})
+        self.assertDictEqual(driver_json, {"driverId":None, "status":"Busy", "areaId":2, "streetId":12})
 
 class AreaUnitTests(unittest.TestCase):
 
@@ -92,7 +92,7 @@ class StopUnitTests(unittest.TestCase):
     def test_stop_getJSON(self):
         stop = Stop(1, 2)
         stop_json = stop.get_json()
-        self.assertDictEqual(stop_json, {"id":None, "driveId":1, "residentId":2})
+        self.assertDictEqual(stop_json, {"stopId":None, "driveId":1, "residentId":2})
 
 class ItemUnitTests(unittest.TestCase):
 
@@ -117,7 +117,7 @@ class DriverStockUnitTests(unittest.TestCase):
     def test_driverStock_getJSON(self):
         driverStock = DriverStock(1, 2, 30)
         driverStock_json = driverStock.get_json()
-        self.assertDictEqual(driverStock_json, {"id":None, "driverId":1, "itemId":2, "quantity":30})
+        self.assertDictEqual(driverStock_json, {"stockId":None, "driverId":1, "itemId":2, "quantity":30})
 
 class NotificationUnitTests(unittest.TestCase):
 
