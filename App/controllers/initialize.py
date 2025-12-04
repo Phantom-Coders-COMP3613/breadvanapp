@@ -32,8 +32,7 @@ def initialize():
     driver_update_stock(driver2, 2, 10)
     driver_update_stock(driver1, 3, 20)
 
-    driver_schedule_drive(driver1, 1, 1, "2025-12-31", "10:00")
+    driver_schedule_drive(driver1, 1, 1, "2026-01-14", "10:00")
     driver_schedule_drive(driver2, 2, 2, "2026-01-06", "09:00")
 
-    resident_request_stop(resident1, 1)
     resident_request_stop(resident2, 2)

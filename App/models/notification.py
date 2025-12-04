@@ -10,6 +10,13 @@ class Notification(db.Model):
 
     def __init__(self,message):
         self.message = message
+        
+    def get_json(self):
+       return {
+           'notificationId': self.id,
+            'residentId': self.residentId,
+            'message': self.message,
+       }
 
     def __repr__(self):
         return f'Resident {self.residentId} received notification!\n {self.message}'
