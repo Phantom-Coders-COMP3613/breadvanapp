@@ -74,19 +74,8 @@ def requested_stops(driveId):
 @login_required(Driver)
 def update_driver_stock():
     data = request.json
-    
-    try:
-        updated_stock = driver_update_stock(current_user, data['item_id'], data['quantity'])
-        
-        stock_data = {
-            'id': updated_stock.id,
-            'itemId': updated_stock.itemId,
-            'itemName': updated_stock.item.name if updated_stock.item else 'Unknown Item',
-            'quantity': updated_stock.quantity
-        }
-        return jsonify(stock_data), 200
-    except ValueError as e:
 
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        return jsonify({"error": f"Failed to update stock: {str(e)}"}), 500
+    updated_stock = driver_update_stock(current_user, data['item_id'], data['quantity'])
+    if not updated_stock:
+        return jsonify({'message': f'Error creating or updating stock'}), 400
+    return jsonify({'message': f'Stock created or updated successfully with ID: {updated_stock.id}'}), 200
