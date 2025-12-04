@@ -2,10 +2,15 @@
 This project provides a command-line interface (CLI) for managing and interacting with the Bread Van App.
  It is built with Flask CLI and click, and supports multiple roles: Admin, Driver, and Resident.
 
-## 🚀 Setup
-### Install dependencies:
+## 🚀 Quick Start / Setup Instructions
+
 ```bash
-$ pip install -r requirements.txt
+git clone https://github.com/Phantom-Coders-COMP3613/breadvanapp.git
+cd breadvanapp
+pip install -r requirements.txt
+
+### Initialize the database:
+flask init
 ```
 
 ### Initialize the database:
@@ -22,6 +27,80 @@ This creates and initializes all accounts and tables.
   * alice / alicepass
   * jane / janepass
   * john / johnpass
+
+## 📦 What is it
+
+The **Bread Van App** is a command-line interface (CLI) and backend service for scheduling and managing Bread Van drives. It supports three separate user roles:
+
+- **Admin** — manages system configuration (drivers, areas, streets)  
+- **Driver** — operates drives and handles resident stop requests  
+- **Resident** — requests stops and interacts as a customer  
+
+It facilitates structured workflows: area → street → drive → stops → residents.
+
+---
+
+
+
+## 🔐 User Roles & Capabilities
+
+### **Admin**
+Admins maintain and configure the entire Bread Van service.  
+Their responsibilities include setting up service areas, creating driver accounts, and ensuring the system remains organized and accurate.
+
+Admins can:
+- **Manage drivers** — create and delete drivers; view all registered users.
+- **Configure service regions** — add areas (e.g., “San Juan”), add streets within areas.
+- **Maintain structure** — delete areas or streets when needed.
+- **View system-wide data** — list all areas, all streets, all users.
+
+Admins do *not* schedule or drive routes; they ensure the platform is ready for drivers and residents.
+
+---
+
+### 🚐 **Driver**
+Drivers operate the actual bread van routes.  
+They manage the schedule of drives and respond to resident stop requests.
+
+Drivers can:
+- **Schedule drives** — pick date/time for upcoming bread van routes.
+- **Cancel drives** — remove a future drive before it starts.
+- **View all their drives** — review past and upcoming routes.
+- **Start and end drives** — begin a route when on the road and close it after completing all stops.
+- **View requested stops** — see which residents requested service on a specific drive.
+
+Drivers act as the service operators.
+
+---
+
+###  🏠  **Resident**
+Residents are the customers using the Bread Van service.  
+They request stops so that drivers know where to visit during a route.
+
+Residents can:
+- **Create an account** — registration does not require admin approval.
+- **Request a stop** — choose their area, street, and house number for a specific drive.
+- **Cancel a stop** — withdraw a stop request if they no longer need service.
+- **View inbox messages** — receive confirmations or notifications.
+- **View driver statistics** — learn about a driver’s performance.
+
+Residents represent the demand side of the service.
+
+---
+
+### **General / User**
+These commands apply to any logged-in user, regardless of their role.
+
+General capabilities include:
+- **Logging in and out**
+- **Viewing available drives** for a specific street
+- **Browsing data** depending on permissions (e.g., areas and streets)
+
+These are the baseline commands that support all roles.
+
+---
+
+## ✨ Features / Commands Overview
 
 ### Run any CLI command using:
 ```bash
@@ -166,6 +245,3 @@ flask resident view_driver_stats <driver_id>
 * flask admin ... → must be logged in as Admin
 * flask driver ... → must be logged in as Driver
 * flask resident ... → must be logged in as Resident
-
-
-General user commands (login/logout/view_street_drives) are available to all.
